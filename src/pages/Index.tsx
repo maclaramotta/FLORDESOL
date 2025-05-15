@@ -68,6 +68,11 @@ const Index = () => {
                 <Link to="/register">Registrar-se</Link>
               </Button>
             </div>
+            <div className="mt-8">
+              <Button variant="link" size="lg" className="text-bronze-600 hover:text-bronze-800" asChild>
+                <Link to="/features">Explorar Funcionalidades →</Link>
+              </Button>
+            </div>
           </div>
         </div>
       </section>
@@ -92,6 +97,12 @@ const Index = () => {
                 </CardContent>
               </Card>
             ))}
+          </div>
+          
+          <div className="text-center mt-12">
+            <Button className="bg-bronze-500 hover:bg-bronze-600" size="lg" asChild>
+              <Link to="/features">Ver todas as funcionalidades</Link>
+            </Button>
           </div>
         </div>
       </section>
@@ -129,6 +140,11 @@ const Index = () => {
                   <p className="text-gray-600">
                     Cadastre clientes com fotos e informações pessoais, realize o teste guiado para determinar o tipo de pele segundo a Escala Fitzpatrick, e preencha anamneses digitais com alertas automáticos para contraindicações.
                   </p>
+                  <div className="mt-4">
+                    <Button variant="outline" className="text-bronze-600" asChild>
+                      <Link to="/features/client-profile">Saiba mais</Link>
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             </TabsContent>
@@ -149,6 +165,11 @@ const Index = () => {
                   <p className="text-gray-600">
                     Agende sessões de bronzeamento, envie lembretes automáticos para os clientes, e forneça instruções personalizadas para antes e depois do procedimento.
                   </p>
+                  <div className="mt-4">
+                    <Button variant="outline" className="text-bronze-600" asChild>
+                      <Link to="/features/appointments">Saiba mais</Link>
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             </TabsContent>
@@ -169,6 +190,11 @@ const Index = () => {
                   <p className="text-gray-600">
                     Acompanhe o tempo mínimo entre sessões baseado no tipo de pele, registre avaliações de satisfação, mantenha um histórico completo de cada cliente, e tenha acesso a métricas importantes para o seu negócio.
                   </p>
+                  <div className="mt-4">
+                    <Button variant="outline" className="text-bronze-600" asChild>
+                      <Link to="/features/professional">Saiba mais</Link>
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             </TabsContent>
@@ -212,6 +238,11 @@ const Index = () => {
                 <li>
                   <Link to="/register" className="text-gray-400 hover:text-white">
                     Registro
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/features" className="text-gray-400 hover:text-white">
+                    Funcionalidades
                   </Link>
                 </li>
                 <li>

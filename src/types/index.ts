@@ -80,3 +80,10 @@ export type Professional = {
   profileImageUrl?: string;
   specialties?: BronzingMethod[];
 };
+
+export type FeatureInfo = {
+  title: string;
+  description: string;
+  icon: React.ReactNode;
+  path: string;
+};
