@@ -182,12 +182,9 @@ const Index = () => {
       {/* CTA Section */}
       <section className="py-20 bg-gradient-to-r from-bronze-500 to-bronze-700 text-white">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold mb-6">
-            Pronto para revolucionar seu salão de bronzeamento?
-          </h2>
+          <h2 className="text-3xl font-bold mb-6">Quer revolucionar seu bronzeamento?</h2>
           <p className="text-xl mb-8 max-w-2xl mx-auto">
-            Junte-se a centenas de profissionais que já estão utilizando nossa plataforma para oferecer um serviço mais seguro e personalizado.
-          </p>
+        </p>
           <Button size="lg" variant="outline" className="bg-white text-bronze-700 hover:bg-gray-100" asChild>
             <Link to="/register">Comece agora</Link>
           </Button>
