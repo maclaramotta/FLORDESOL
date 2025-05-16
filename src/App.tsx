@@ -24,6 +24,22 @@ import ProfessionalPanel from "./pages/features/ProfessionalPanel";
 import HistoryEvolution from "./pages/features/HistoryEvolution";
 import SecurityLGPD from "./pages/features/SecurityLGPD";
 
+// Store placeholder page
+const StorePage = () => (
+  <div className="container mx-auto px-4 py-12">
+    <h1 className="text-3xl font-bold mb-6">Loja de Produtos</h1>
+    <p className="text-xl">Em breve você poderá comprar produtos de bronzeamento e moda praia aqui!</p>
+  </div>
+);
+
+// Support placeholder page
+const SupportPage = () => (
+  <div className="container mx-auto px-4 py-12">
+    <h1 className="text-3xl font-bold mb-6">Suporte e Chat</h1>
+    <p className="text-xl">Em breve você poderá conversar com nossa equipe e tirar dúvidas aqui!</p>
+  </div>
+);
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -40,6 +56,8 @@ const App = () => (
           <Route path="/anamnesis" element={<MainLayout><div className="container mx-auto px-4 py-8"><AnamnesisForm clientId="mock-client-id" /></div></MainLayout>} />
           <Route path="/appointments" element={<MainLayout><div className="container mx-auto px-4 py-8"><Scheduling /></div></MainLayout>} />
           <Route path="/professionals" element={<MainLayout><div className="container mx-auto px-4 py-8"><ProfessionalDashboard /></div></MainLayout>} />
+          <Route path="/store" element={<MainLayout><StorePage /></MainLayout>} />
+          <Route path="/support" element={<MainLayout><SupportPage /></MainLayout>} />
           
           {/* Feature pages */}
           <Route path="/features" element={<MainLayout><FeaturesOverview /></MainLayout>} />
