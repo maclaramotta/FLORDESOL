@@ -12,6 +12,7 @@ import AnamnesisForm from "./components/anamnesis/AnamnesisForm";
 import LoginForm from "./components/auth/LoginForm";
 import AppointmentScheduler from "./components/appointments/AppointmentScheduler";
 import ProfessionalDashboard from "./components/professional/ProfessionalDashboard";
+import Scheduling from "./pages/Scheduling";
 
 // Feature pages
 import FeaturesOverview from "./pages/features/FeaturesOverview";
@@ -37,7 +38,7 @@ const App = () => (
           <Route path="/register" element={<MainLayout><div className="container mx-auto px-4 py-12">Página de registro</div></MainLayout>} />
           <Route path="/clients" element={<MainLayout><div className="container mx-auto px-4 py-8"><ClientProfile /></div></MainLayout>} />
           <Route path="/anamnesis" element={<MainLayout><div className="container mx-auto px-4 py-8"><AnamnesisForm clientId="mock-client-id" /></div></MainLayout>} />
-          <Route path="/appointments" element={<MainLayout><div className="container mx-auto px-4 py-8"><AppointmentScheduler /></div></MainLayout>} />
+          <Route path="/appointments" element={<MainLayout><div className="container mx-auto px-4 py-8"><Scheduling /></div></MainLayout>} />
           <Route path="/professionals" element={<MainLayout><div className="container mx-auto px-4 py-8"><ProfessionalDashboard /></div></MainLayout>} />
           
           {/* Feature pages */}

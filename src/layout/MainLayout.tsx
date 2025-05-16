@@ -15,9 +15,11 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
 
   const navigationItems = [
     { name: "Início", path: "/" },
-    { name: "Clientes", path: "/clients" },
     { name: "Agendamentos", path: "/appointments" },
+    { name: "Clientes", path: "/clients" },
+    { name: "Anamnese", path: "/anamnesis" },
     { name: "Profissionais", path: "/professionals" },
+    { name: "Recursos", path: "/features" },
   ];
 
   return (
