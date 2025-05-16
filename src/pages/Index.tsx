@@ -199,7 +199,7 @@ const Index = () => {
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div>
-              <h3 className="text-xl font-bold mb-4">BronzeSun</h3>
+              <h3 className="text-xl font-bold mb-4">FLOR DE SOL</h3>
               <p className="text-gray-400">
                 Sistema completo para gestão de salões de bronzeamento
               </p>
@@ -242,9 +242,9 @@ const Index = () => {
             <div>
               <h3 className="text-lg font-semibold mb-4">Contato</h3>
               <address className="text-gray-400 not-italic">
-                <p>contato@bronzesun.com.br</p>
-                <p>+55 (11) 99999-9999</p>
-                <p>São Paulo, SP - Brasil</p>
+                <p></p>
+                <p>+55 (64) 9 9617-0209</p>
+                <p>Itumbiara - Goiás</p>
               </address>
             </div>
           </div>
