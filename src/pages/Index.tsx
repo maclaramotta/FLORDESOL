@@ -1,9 +1,15 @@
-import React from "react";
+
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { CalendarPlus, Clock, Bell, List } from "lucide-react";
+import AppointmentScheduler from "@/components/appointments/AppointmentScheduler";
+
 const Index = () => {
+  const [appointmentTab, setAppointmentTab] = useState("novo");
+  
   const features = [{
     title: "Perfil do Cliente",
     description: "Cadastro completo com foto, informações pessoais e avaliação de tipo de pele através de teste guiado pelo app.",
@@ -29,6 +35,7 @@ const Index = () => {
     description: "Dados criptografados e armazenados com consentimento, seguindo todas as normas da LGPD.",
     icon: "🔒"
   }];
+  
   return <div className="flex flex-col min-h-screen">
       {/* Hero Section */}
       <section className="relative overflow-hidden">
@@ -47,11 +54,143 @@ const Index = () => {
                 <Link to="/register">Registrar-se</Link>
               </Button>
             </div>
-            <div className="mt-8">
-              <Button variant="link" size="lg" className="text-bronze-600 hover:text-bronze-800" asChild>
-                <Link to="/features">Explorar Funcionalidades →</Link>
-              </Button>
-            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Agendamento Section */}
+      <section className="py-16 bg-gradient-to-br from-amber-50 to-orange-50">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold mb-4">Agende Seu Bronzeamento</h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              Escolha o horário ideal e o método de bronzeamento perfeito para o seu tipo de pele
+            </p>
+          </div>
+
+          <div className="max-w-4xl mx-auto">
+            <Tabs value={appointmentTab} onValueChange={setAppointmentTab} className="w-full">
+              <TabsList className="grid w-full grid-cols-3 mb-8">
+                <TabsTrigger value="novo" className="flex items-center gap-2">
+                  <CalendarPlus size={18} />
+                  Novo Agendamento
+                </TabsTrigger>
+                <TabsTrigger value="proximos" className="flex items-center gap-2">
+                  <Clock size={18} />
+                  Próximos Horários
+                </TabsTrigger>
+                <TabsTrigger value="historico" className="flex items-center gap-2">
+                  <List size={18} />
+                  Histórico
+                </TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="novo">
+                <Card className="border shadow-md">
+                  <CardContent className="pt-6">
+                    <AppointmentScheduler />
+                  </CardContent>
+                </Card>
+              </TabsContent>
+              
+              <TabsContent value="proximos">
+                <Card className="border shadow-md">
+                  <CardContent className="pt-6">
+                    <h3 className="text-xl font-semibold mb-4">Seus Próximos Agendamentos</h3>
+                    
+                    <div className="space-y-4">
+                      {/* Agendamentos próximos */}
+                      <div className="p-4 border rounded-lg bg-white flex justify-between items-center">
+                        <div className="flex items-center gap-4">
+                          <div className="h-12 w-12 rounded-full bg-bronze-100 flex items-center justify-center">
+                            <Bell className="h-6 w-6 text-bronze-600" />
+                          </div>
+                          <div>
+                            <h4 className="font-medium">Bronzeamento em Cabine</h4>
+                            <p className="text-gray-500">Session: 20 minutos</p>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className="font-medium">28 Maio, 2025</div>
+                          <div className="text-sm text-gray-500">15:30</div>
+                        </div>
+                      </div>
+                      
+                      <div className="p-4 border rounded-lg bg-white flex justify-between items-center">
+                        <div className="flex items-center gap-4">
+                          <div className="h-12 w-12 rounded-full bg-bronze-100 flex items-center justify-center">
+                            <Bell className="h-6 w-6 text-bronze-600" />
+                          </div>
+                          <div>
+                            <h4 className="font-medium">Bronzeamento Natural</h4>
+                            <p className="text-gray-500">Session: 30 minutos</p>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className="font-medium">10 Junho, 2025</div>
+                          <div className="text-sm text-gray-500">10:00</div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="mt-6 flex justify-center">
+                      <Button className="bg-bronze-500 hover:bg-bronze-600">
+                        Ver Todos os Agendamentos
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+              
+              <TabsContent value="historico">
+                <Card className="border shadow-md">
+                  <CardContent className="pt-6">
+                    <h3 className="text-xl font-semibold mb-4">Histórico de Bronzeamentos</h3>
+                    
+                    <div className="space-y-4">
+                      {/* Agendamentos anteriores */}
+                      <div className="p-4 border rounded-lg bg-white flex justify-between items-center opacity-70">
+                        <div className="flex items-center gap-4">
+                          <div className="h-12 w-12 rounded-full bg-gray-100 flex items-center justify-center">
+                            <Bell className="h-6 w-6 text-gray-600" />
+                          </div>
+                          <div>
+                            <h4 className="font-medium">Bronzeamento Spray</h4>
+                            <p className="text-gray-500">Session: 15 minutos</p>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className="font-medium">15 Abril, 2025</div>
+                          <div className="text-sm text-gray-500">14:00</div>
+                        </div>
+                      </div>
+                      
+                      <div className="p-4 border rounded-lg bg-white flex justify-between items-center opacity-70">
+                        <div className="flex items-center gap-4">
+                          <div className="h-12 w-12 rounded-full bg-gray-100 flex items-center justify-center">
+                            <Bell className="h-6 w-6 text-gray-600" />
+                          </div>
+                          <div>
+                            <h4 className="font-medium">Bronzeamento em Cabine</h4>
+                            <p className="text-gray-500">Session: 20 minutos</p>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className="font-medium">1 Março, 2025</div>
+                          <div className="text-sm text-gray-500">11:30</div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="mt-6 flex justify-center">
+                      <Button variant="outline">
+                        Ver Histórico Completo
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+            </Tabs>
           </div>
         </div>
       </section>
@@ -184,7 +323,8 @@ const Index = () => {
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl font-bold mb-6">Quer revolucionar seu bronzeamento?</h2>
           <p className="text-xl mb-8 max-w-2xl mx-auto">
-        </p>
+            Agende agora mesmo sua sessão e experimente um atendimento personalizado com base no seu tipo de pele
+          </p>
           <Button size="lg" variant="outline" className="bg-white text-bronze-700 hover:bg-gray-100" asChild>
             <Link to="/register">Comece agora</Link>
           </Button>
@@ -239,14 +379,14 @@ const Index = () => {
             <div>
               <h3 className="text-lg font-semibold mb-4">Contato</h3>
               <address className="text-gray-400 not-italic">
-                <p></p>
+                <p>contato@flordesol.com.br</p>
                 <p>+55 (64) 9 9617-0209</p>
                 <p>Itumbiara - Goiás</p>
               </address>
             </div>
           </div>
           <div className="border-t border-gray-800 mt-12 pt-8 text-center text-gray-500">
-            <p>&copy; {new Date().getFullYear()} BronzeSun. Todos os direitos reservados.</p>
+            <p>&copy; {new Date().getFullYear()} Flor de Sol. Todos os direitos reservados.</p>
           </div>
         </div>
       </footer>
