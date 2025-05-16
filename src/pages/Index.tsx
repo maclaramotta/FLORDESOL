@@ -1,61 +1,42 @@
-
 import React from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
 const Index = () => {
-  const features = [
-    {
-      title: "Perfil do Cliente",
-      description:
-        "Cadastro completo com foto, informações pessoais e avaliação de tipo de pele através de teste guiado pelo app.",
-      icon: "👤",
-    },
-    {
-      title: "Anamnese Digital",
-      description:
-        "Formulário dinâmico que identifica contraindicações e gera alertas automáticos para garantir a segurança do cliente.",
-      icon: "📝",
-    },
-    {
-      title: "IA Personalizada",
-      description:
-        "Recomendações personalizadas de bronzeamento baseadas no tipo de pele e histórico do cliente.",
-      icon: "🤖",
-    },
-    {
-      title: "Agendamento Inteligente",
-      description:
-        "Sistema integrado de agendamento com lembretes automáticos e instruções para antes e depois do bronzeamento.",
-      icon: "📅",
-    },
-    {
-      title: "Painel Profissional",
-      description:
-        "Controle de tempos mínimos entre sessões, avaliações de satisfação e histórico completo dos clientes.",
-      icon: "📊",
-    },
-    {
-      title: "Segurança LGPD",
-      description:
-        "Dados criptografados e armazenados com consentimento, seguindo todas as normas da LGPD.",
-      icon: "🔒",
-    },
-  ];
-
-  return (
-    <div className="flex flex-col min-h-screen">
+  const features = [{
+    title: "Perfil do Cliente",
+    description: "Cadastro completo com foto, informações pessoais e avaliação de tipo de pele através de teste guiado pelo app.",
+    icon: "👤"
+  }, {
+    title: "Anamnese Digital",
+    description: "Formulário dinâmico que identifica contraindicações e gera alertas automáticos para garantir a segurança do cliente.",
+    icon: "📝"
+  }, {
+    title: "IA Personalizada",
+    description: "Recomendações personalizadas de bronzeamento baseadas no tipo de pele e histórico do cliente.",
+    icon: "🤖"
+  }, {
+    title: "Agendamento Inteligente",
+    description: "Sistema integrado de agendamento com lembretes automáticos e instruções para antes e depois do bronzeamento.",
+    icon: "📅"
+  }, {
+    title: "Painel Profissional",
+    description: "Controle de tempos mínimos entre sessões, avaliações de satisfação e histórico completo dos clientes.",
+    icon: "📊"
+  }, {
+    title: "Segurança LGPD",
+    description: "Dados criptografados e armazenados com consentimento, seguindo todas as normas da LGPD.",
+    icon: "🔒"
+  }];
+  return <div className="flex flex-col min-h-screen">
       {/* Hero Section */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 z-0 shine-gradient animate-shine"></div>
         <div className="container mx-auto px-4 py-20 md:py-32 relative z-10">
           <div className="max-w-4xl mx-auto text-center">
             <h1 className="text-4xl md:text-6xl font-bold mb-6 tracking-tight">
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-bronze-600 to-bronze-800">
-                BronzeSun
-              </span>
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-bronze-600 to-bronze-800 text-7xl">FLOR DE SOL</span>
             </h1>
             <p className="text-xl md:text-2xl mb-8 text-gray-700">
               Sistema completo para gestão de clientes e bronzeamento seguro
@@ -88,15 +69,13 @@ const Index = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {features.map((feature, index) => (
-              <Card key={index} className="hover:shadow-md transition-shadow duration-300">
+            {features.map((feature, index) => <Card key={index} className="hover:shadow-md transition-shadow duration-300">
                 <CardContent className="pt-6">
                   <div className="text-4xl mb-4">{feature.icon}</div>
                   <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
                   <p className="text-gray-600">{feature.description}</p>
                 </CardContent>
-              </Card>
-            ))}
+              </Card>)}
           </div>
           
           <div className="text-center mt-12">
@@ -276,8 +255,6 @@ const Index = () => {
           </div>
         </div>
       </footer>
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
