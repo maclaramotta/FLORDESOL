@@ -38,9 +38,7 @@ const Index = () => {
             <h1 className="text-4xl md:text-6xl font-bold mb-6 tracking-tight">
               <span className="bg-clip-text text-transparent bg-gradient-to-r from-bronze-600 to-bronze-800 text-7xl">FLOR DE SOL</span>
             </h1>
-            <p className="text-xl md:text-2xl mb-8 text-gray-700">
-              Sistema completo para gestão de clientes e bronzeamento seguro
-            </p>
+            <p className="text-xl md:text-2xl mb-8 text-amber-600">ESTÉTICA E BRONZEAMENTO</p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
               <Button size="lg" className="bg-bronze-500 hover:bg-bronze-600" asChild>
                 <Link to="/login">Fazer Login</Link>
