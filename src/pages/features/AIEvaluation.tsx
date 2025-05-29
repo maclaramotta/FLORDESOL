@@ -1,11 +1,22 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { Clock, AlertTriangle, ChartBar, Sparkles } from "lucide-react";
+import { Clock, AlertTriangle, ChartBar, Sparkles, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 const AIEvaluation = () => {
+  const [uploadedImage, setUploadedImage] = useState<File | null>(null);
+
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setUploadedImage(file);
+    }
+  };
+
   return (
     <div className="container mx-auto px-4 py-12">
       <div className="max-w-4xl mx-auto">
@@ -19,6 +30,54 @@ const AIEvaluation = () => {
             Sugestões inteligentes para o seu bronzeado
           </p>
         </div>
+
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle className="text-2xl">Simulador de Bronze</CardTitle>
+            <CardDescription>
+              Envie uma foto para simular seu bronze!
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <Label htmlFor="image-upload" className="text-base font-medium">
+                Upload da sua foto
+              </Label>
+              <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-bronze-400 transition-colors">
+                <div className="space-y-2">
+                  <Upload className="h-8 w-8 text-gray-400 mx-auto" />
+                  <div className="text-sm text-gray-600">
+                    {uploadedImage ? (
+                      <span className="text-bronze-600 font-medium">
+                        Imagem selecionada: {uploadedImage.name}
+                      </span>
+                    ) : (
+                      "Clique para selecionar uma imagem ou arraste aqui"
+                    )}
+                  </div>
+                  <Input
+                    id="image-upload"
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    className="hidden"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => document.getElementById('image-upload')?.click()}
+                    className="mt-2"
+                  >
+                    Escolher Arquivo
+                  </Button>
+                </div>
+              </div>
+              <p className="text-sm text-gray-500">
+                Formatos aceitos: JPG, PNG, GIF (máximo 10MB)
+              </p>
+            </div>
+          </CardContent>
+        </Card>
 
         <Card className="mb-8">
           <CardHeader>
