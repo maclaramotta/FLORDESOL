@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -13,6 +12,7 @@ import LoginForm from "./components/auth/LoginForm";
 import AppointmentScheduler from "./components/appointments/AppointmentScheduler";
 import ProfessionalDashboard from "./components/professional/ProfessionalDashboard";
 import Scheduling from "./pages/Scheduling";
+import RegisterForm from "./components/auth/RegisterForm";
 
 // Feature pages
 import FeaturesOverview from "./pages/features/FeaturesOverview";
@@ -51,7 +51,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<MainLayout><Index /></MainLayout>} />
           <Route path="/login" element={<MainLayout><div className="container mx-auto px-4 py-12"><LoginForm /></div></MainLayout>} />
-          <Route path="/register" element={<MainLayout><div className="container mx-auto px-4 py-12">Página de registro</div></MainLayout>} />
+          <Route path="/register" element={<MainLayout><div className="container mx-auto px-4 py-12"><RegisterForm /></div></MainLayout>} />
           <Route path="/clients" element={<MainLayout><div className="container mx-auto px-4 py-8"><ClientProfile /></div></MainLayout>} />
           <Route path="/anamnesis" element={<MainLayout><div className="container mx-auto px-4 py-8"><AnamnesisForm clientId="mock-client-id" /></div></MainLayout>} />
           <Route path="/appointments" element={<MainLayout><div className="container mx-auto px-4 py-8"><Scheduling /></div></MainLayout>} />
