@@ -1,7 +1,6 @@
-
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { Clock, AlertTriangle, ChartBar, Sparkles, Upload } from "lucide-react";
+import { Clock, AlertTriangle, ChartBar, Sparkles, Upload, CloudSun } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -15,6 +14,10 @@ const AIEvaluation = () => {
     if (file) {
       setUploadedImage(file);
     }
+  };
+
+  const handleWeatherClick = () => {
+    window.open('https://www.google.com/search?q=clima+Itumbiara', '_blank');
   };
 
   return (
@@ -77,6 +80,48 @@ const AIEvaluation = () => {
               </p>
             </div>
           </CardContent>
+        </Card>
+
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle className="text-2xl flex items-center gap-2">
+              <CloudSun className="h-6 w-6 text-bronze-600" />
+              Previsão do Tempo
+            </CardTitle>
+            <CardDescription>
+              Condições ideais para seu bronzeamento
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid md:grid-cols-2 gap-4">
+              <div className="space-y-3">
+                <div className="bg-bronze-50 p-4 rounded-lg">
+                  <h3 className="font-medium text-bronze-800 mb-2">Melhor dia</h3>
+                  <p className="text-lg font-semibold text-bronze-700">Sexta-feira</p>
+                </div>
+              </div>
+              <div className="space-y-3">
+                <div className="bg-bronze-50 p-4 rounded-lg">
+                  <h3 className="font-medium text-bronze-800 mb-2">Horário ideal</h3>
+                  <p className="text-lg font-semibold text-bronze-700">14:00 - 16:00</p>
+                </div>
+              </div>
+            </div>
+            
+            <div className="bg-gradient-to-r from-blue-50 to-bronze-50 p-4 rounded-lg">
+              <h3 className="font-medium text-gray-800 mb-2">Previsão Detalhada</h3>
+              <p className="text-gray-700">Sol com poucas nuvens, temperatura ideal para bronzeamento seguro. Vento fraco e baixa umidade.</p>
+            </div>
+          </CardContent>
+          <CardFooter>
+            <Button 
+              onClick={handleWeatherClick}
+              variant="outline" 
+              className="w-full border-bronze-300 text-bronze-700 hover:bg-bronze-50"
+            >
+              Ver Clima Agora
+            </Button>
+          </CardFooter>
         </Card>
 
         <Card className="mb-8">
