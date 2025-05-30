@@ -1,37 +1,23 @@
-
 import React from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Calendar, Award, Star } from "lucide-react";
-
 const CTASection = () => {
-  return (
-    <section className="py-20 bg-gradient-to-r from-bronze-500 to-bronze-700 text-white">
+  return <section className="py-20 bg-gradient-to-r from-bronze-500 to-bronze-700 text-white">
       <div className="container mx-auto px-4 text-center">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">Pronta para um bronzeado perfeito?</h2>
-          <p className="text-xl mb-8 max-w-2xl mx-auto">
-            Agende agora e aproveite um atendimento personalizado baseado no seu tipo de pele e preferências
-          </p>
+          <p className="text-xl mb-8 max-w-2xl mx-auto">Agende agora e aproveite um atendimento baseado no seu tipo de pele.</p>
           
           <div className="flex flex-col md:flex-row justify-center gap-6 mb-12">
-            <Button 
-              size="lg" 
-              variant="outline" 
-              className="bg-white text-bronze-700 hover:bg-gray-100 border-none" 
-              asChild
-            >
+            <Button size="lg" variant="outline" className="bg-white text-bronze-700 hover:bg-gray-100 border-none" asChild>
               <Link to="/appointments">
                 <Calendar className="mr-2 h-5 w-5" /> 
                 Agendar Sessão
               </Link>
             </Button>
             
-            <Button 
-              size="lg" 
-              className="bg-amber-400 text-bronze-800 hover:bg-amber-500 border-none" 
-              asChild
-            >
+            <Button size="lg" className="bg-amber-400 text-bronze-800 hover:bg-amber-500 border-none" asChild>
               <Link to="/clients">
                 <Award className="mr-2 h-5 w-5" /> 
                 Programa Fidelidade
@@ -75,8 +61,6 @@ const CTASection = () => {
           </div>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default CTASection;
