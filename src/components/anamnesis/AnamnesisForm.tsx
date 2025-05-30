@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -12,6 +11,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AnamnesisQuestion, AnamnesisResponse } from "@/types";
 import { toast } from "sonner";
 import DigitalSignature from "./DigitalSignature";
+import AnamnesisReportGenerator from "./AnamnesisReportGenerator";
 
 interface AnamnesisFormProps {
   clientId: string;
@@ -24,6 +24,15 @@ const AnamnesisForm: React.FC<AnamnesisFormProps> = ({ clientId, onComplete }) =
   const [signature, setSignature] = useState<string>("");
   const [warnings, setWarnings] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showReport, setShowReport] = useState(false);
+
+  // Mock client data - in real app this would come from props or API
+  const clientData = {
+    name: "Cliente Exemplo",
+    email: "cliente@exemplo.com",
+    phone: "(62) 99999-9999",
+    birthdate: "1990-01-01"
+  };
 
   // Example predefined questions
   const questions: AnamnesisQuestion[] = [
@@ -174,6 +183,7 @@ const AnamnesisForm: React.FC<AnamnesisFormProps> = ({ clientId, onComplete }) =
       // Mock API call - replace with actual API
       await new Promise(resolve => setTimeout(resolve, 1000));
       toast.success("Anamnese salva com sucesso!");
+      setShowReport(true);
       
       if (onComplete) {
         onComplete("anamnesis-mock-id");
@@ -255,6 +265,17 @@ const AnamnesisForm: React.FC<AnamnesisFormProps> = ({ clientId, onComplete }) =
     }
   };
 
+  if (showReport) {
+    return (
+      <AnamnesisReportGenerator
+        responses={responses}
+        clientData={clientData}
+        signature={signature}
+        onSave={() => toast.success("Ficha salva no sistema!")}
+      />
+    );
+  }
+
   return (
     <Card className="w-full">
       <CardHeader>
@@ -334,7 +355,7 @@ const AnamnesisForm: React.FC<AnamnesisFormProps> = ({ clientId, onComplete }) =
             className="bg-bronze-500 hover:bg-bronze-600"
             disabled={isSubmitting || !signature}
           >
-            {isSubmitting ? "Salvando..." : "Concluir Anamnese"}
+            {isSubmitting ? "Gerando Ficha..." : "Gerar Ficha de Anamnese"}
           </Button>
         )}
       </CardFooter>
