@@ -10,6 +10,7 @@ import { Separator } from "@/components/ui/separator";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AnamnesisQuestion, AnamnesisResponse } from "@/types";
 import { toast } from "sonner";
+import { useAnamnesisValidation } from "@/hooks/useAnamnesisValidation";
 import DigitalSignature from "./DigitalSignature";
 import AnamnesisReportGenerator from "./AnamnesisReportGenerator";
 
@@ -25,6 +26,8 @@ const AnamnesisForm: React.FC<AnamnesisFormProps> = ({ clientId, onComplete }) =
   const [warnings, setWarnings] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showReport, setShowReport] = useState(false);
+
+  const { markAnamnesisCompleted } = useAnamnesisValidation(clientId);
 
   // Mock client data - in real app this would come from props or API
   const clientData = {
@@ -182,6 +185,10 @@ const AnamnesisForm: React.FC<AnamnesisFormProps> = ({ clientId, onComplete }) =
     try {
       // Mock API call - replace with actual API
       await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Mark anamnesis as completed for this client
+      markAnamnesisCompleted(clientId);
+      
       toast.success("Anamnese salva com sucesso!");
       setShowReport(true);
       

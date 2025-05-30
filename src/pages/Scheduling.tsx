@@ -1,15 +1,21 @@
-
 import React, { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CalendarPlus, Clock, Bell, List, CalendarCheck, Calendar } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { CalendarPlus, Clock, Bell, List, CalendarCheck, Calendar, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
+import { useAnamnesisValidation } from "@/hooks/useAnamnesisValidation";
 import AppointmentScheduler from "@/components/appointments/AppointmentScheduler";
-import { Form } from "@/components/ui/form";
+import AnamnesisRequiredAlert from "@/components/appointments/AnamnesisRequiredAlert";
 
 const Scheduling = () => {
   const [activeTab, setActiveTab] = useState("new");
+  const [showAnamnesisAlert, setShowAnamnesisAlert] = useState(false);
+
+  // Mock client ID - in real app this would come from authentication
+  const mockClientId = "mock-client-123";
+  const { hasAnamnesis, isLoading } = useAnamnesisValidation(mockClientId);
 
   // Mock upcoming appointments data
   const upcomingAppointments = [
@@ -56,13 +62,23 @@ const Scheduling = () => {
 
   const handleCancelAppointment = (id: number) => {
     toast.success(`Agendamento #${id} cancelado com sucesso`);
-    // Here you would handle the cancellation logic
   };
 
   const handleReschedule = (id: number) => {
+    if (!hasAnamnesis) {
+      setShowAnamnesisAlert(true);
+      return;
+    }
     setActiveTab("new");
     toast.info(`Vamos reagendar o horário #${id}`);
-    // Here you would handle the rescheduling logic
+  };
+
+  const handleTabChange = (value: string) => {
+    if (value === "new" && !hasAnamnesis && !isLoading) {
+      setShowAnamnesisAlert(true);
+      return;
+    }
+    setActiveTab(value);
   };
 
   return (
@@ -80,9 +96,22 @@ const Scheduling = () => {
           </p>
         </div>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        {!hasAnamnesis && !isLoading && (
+          <Alert className="bg-amber-50 border-amber-200 mb-8">
+            <AlertTriangle className="h-4 w-4 text-amber-600" />
+            <AlertDescription className="text-amber-800">
+              ⚠️ Atenção: Para prosseguir com o agendamento, é necessário preencher sua ficha de anamnese. 
+              Isso garante sua segurança e um atendimento personalizado.
+            </AlertDescription>
+          </Alert>
+        )}
+
+        <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
           <TabsList className="grid w-full grid-cols-3 mb-8">
-            <TabsTrigger value="new" className="flex items-center gap-2">
+            <TabsTrigger 
+              value="new" 
+              className={`flex items-center gap-2 ${!hasAnamnesis ? 'opacity-60' : ''}`}
+            >
               <CalendarPlus size={18} />
               Novo Agendamento
             </TabsTrigger>
@@ -151,8 +180,9 @@ const Scheduling = () => {
                       Cancelar Agendamento
                     </Button>
                     <Button 
-                      className="bg-bronze-500 hover:bg-bronze-600"
+                      className={`${hasAnamnesis ? 'bg-bronze-500 hover:bg-bronze-600' : 'opacity-50 cursor-not-allowed'}`}
                       onClick={() => handleReschedule(upcomingAppointments[0].id)}
+                      disabled={!hasAnamnesis}
                     >
                       Reagendar Horário
                     </Button>
@@ -163,8 +193,9 @@ const Scheduling = () => {
                   <div className="text-center py-8">
                     <p className="text-gray-500 mb-4">Você não possui agendamentos futuros.</p>
                     <Button 
-                      className="bg-bronze-500 hover:bg-bronze-600"
-                      onClick={() => setActiveTab("new")}
+                      className={`${hasAnamnesis ? 'bg-bronze-500 hover:bg-bronze-600' : 'opacity-50 cursor-not-allowed'}`}
+                      onClick={() => handleTabChange("new")}
+                      disabled={!hasAnamnesis}
                     >
                       Agendar Nova Sessão
                     </Button>
@@ -202,7 +233,9 @@ const Scheduling = () => {
                 <div className="mt-6 flex justify-center">
                   <Button 
                     variant="outline"
-                    onClick={() => setActiveTab("new")}
+                    onClick={() => handleTabChange("new")}
+                    disabled={!hasAnamnesis}
+                    className={!hasAnamnesis ? 'opacity-50 cursor-not-allowed' : ''}
                   >
                     Agendar Nova Sessão
                   </Button>
@@ -236,6 +269,11 @@ const Scheduling = () => {
           </div>
         </div>
       </div>
+
+      <AnamnesisRequiredAlert 
+        isOpen={showAnamnesisAlert}
+        onClose={() => setShowAnamnesisAlert(false)}
+      />
     </div>
   );
 };
