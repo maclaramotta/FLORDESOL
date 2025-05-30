@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -13,6 +14,7 @@ import AppointmentScheduler from "./components/appointments/AppointmentScheduler
 import ProfessionalDashboard from "./components/professional/ProfessionalDashboard";
 import Scheduling from "./pages/Scheduling";
 import RegisterForm from "./components/auth/RegisterForm";
+import BronzeSimulator from "./pages/BronzeSimulator";
 
 // Feature pages
 import FeaturesOverview from "./pages/features/FeaturesOverview";
@@ -58,6 +60,7 @@ const App = () => (
           <Route path="/professionals" element={<MainLayout><div className="container mx-auto px-4 py-8"><ProfessionalDashboard /></div></MainLayout>} />
           <Route path="/store" element={<MainLayout><StorePage /></MainLayout>} />
           <Route path="/support" element={<MainLayout><SupportPage /></MainLayout>} />
+          <Route path="/bronze-simulator" element={<MainLayout><BronzeSimulator /></MainLayout>} />
           
           {/* Feature pages */}
           <Route path="/features" element={<MainLayout><FeaturesOverview /></MainLayout>} />

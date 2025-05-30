@@ -68,7 +68,7 @@ const SimulatorPreviewSection = () => {
               
               <div className="mt-10">
                 <Button className="bg-bronze-500 hover:bg-bronze-600" size="lg" asChild>
-                  <Link to="/features/ai-evaluation">Experimentar Simulador</Link>
+                  <Link to="/bronze-simulator">Experimentar Simulador</Link>
                 </Button>
               </div>
             </div>
@@ -90,7 +90,7 @@ const SimulatorPreviewSection = () => {
                   
                   <div className="absolute bottom-4 right-4">
                     <div className="bg-bronze-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
-                      Disponível em Breve
+                      Disponível Agora
                     </div>
                   </div>
                 </div>
