@@ -15,6 +15,7 @@ import ProfessionalDashboard from "./components/professional/ProfessionalDashboa
 import Scheduling from "./pages/Scheduling";
 import RegisterForm from "./components/auth/RegisterForm";
 import BronzeSimulator from "./pages/BronzeSimulator";
+import AnamnesisGuard from "./components/auth/AnamnesisGuard";
 
 // Feature pages
 import FeaturesOverview from "./pages/features/FeaturesOverview";
@@ -51,18 +52,13 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
+          {/* Public routes - don't require anamnesis */}
           <Route path="/" element={<MainLayout><Index /></MainLayout>} />
           <Route path="/login" element={<MainLayout><div className="container mx-auto px-4 py-12"><LoginForm /></div></MainLayout>} />
           <Route path="/register" element={<MainLayout><div className="container mx-auto px-4 py-12"><RegisterForm /></div></MainLayout>} />
-          <Route path="/clients" element={<MainLayout><div className="container mx-auto px-4 py-8"><ClientProfile /></div></MainLayout>} />
-          <Route path="/anamnesis" element={<MainLayout><div className="container mx-auto px-4 py-8"><AnamnesisForm clientId="mock-client-id" /></div></MainLayout>} />
-          <Route path="/appointments" element={<MainLayout><div className="container mx-auto px-4 py-8"><Scheduling /></div></MainLayout>} />
-          <Route path="/professionals" element={<MainLayout><div className="container mx-auto px-4 py-8"><ProfessionalDashboard /></div></MainLayout>} />
-          <Route path="/store" element={<MainLayout><StorePage /></MainLayout>} />
-          <Route path="/support" element={<MainLayout><SupportPage /></MainLayout>} />
           <Route path="/bronze-simulator" element={<MainLayout><BronzeSimulator /></MainLayout>} />
           
-          {/* Feature pages */}
+          {/* Feature pages - public */}
           <Route path="/features" element={<MainLayout><FeaturesOverview /></MainLayout>} />
           <Route path="/features/client-profile" element={<MainLayout><ClientProfileFeature /></MainLayout>} />
           <Route path="/features/anamnesis" element={<MainLayout><AnamnesisDigital /></MainLayout>} />
@@ -75,6 +71,57 @@ const App = () => (
           <Route path="/privacy" element={<MainLayout><div className="container mx-auto px-4 py-12">Política de Privacidade</div></MainLayout>} />
           <Route path="/terms" element={<MainLayout><div className="container mx-auto px-4 py-12">Termos de Uso</div></MainLayout>} />
           <Route path="/lgpd" element={<MainLayout><div className="container mx-auto px-4 py-12">LGPD</div></MainLayout>} />
+
+          {/* Protected routes - require anamnesis check */}
+          <Route path="/anamnesis" element={
+            <MainLayout>
+              <AnamnesisGuard>
+                <div className="container mx-auto px-4 py-8">
+                  <AnamnesisForm clientId="mock-client-id" />
+                </div>
+              </AnamnesisGuard>
+            </MainLayout>
+          } />
+          <Route path="/clients" element={
+            <MainLayout>
+              <AnamnesisGuard>
+                <div className="container mx-auto px-4 py-8">
+                  <ClientProfile />
+                </div>
+              </AnamnesisGuard>
+            </MainLayout>
+          } />
+          <Route path="/appointments" element={
+            <MainLayout>
+              <AnamnesisGuard>
+                <Scheduling />
+              </AnamnesisGuard>
+            </MainLayout>
+          } />
+          <Route path="/professionals" element={
+            <MainLayout>
+              <AnamnesisGuard>
+                <div className="container mx-auto px-4 py-8">
+                  <ProfessionalDashboard />
+                </div>
+              </AnamnesisGuard>
+            </MainLayout>
+          } />
+          <Route path="/store" element={
+            <MainLayout>
+              <AnamnesisGuard>
+                <StorePage />
+              </AnamnesisGuard>
+            </MainLayout>
+          } />
+          <Route path="/support" element={
+            <MainLayout>
+              <AnamnesisGuard>
+                <SupportPage />
+              </AnamnesisGuard>
+            </MainLayout>
+          } />
+          
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

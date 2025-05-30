@@ -13,6 +13,7 @@ import { toast } from "sonner";
 import { useAnamnesisValidation } from "@/hooks/useAnamnesisValidation";
 import DigitalSignature from "./DigitalSignature";
 import AnamnesisReportGenerator from "./AnamnesisReportGenerator";
+import AnamnesisWelcomeMessage from "./AnamnesisWelcomeMessage";
 
 interface AnamnesisFormProps {
   clientId: string;
@@ -284,89 +285,93 @@ const AnamnesisForm: React.FC<AnamnesisFormProps> = ({ clientId, onComplete }) =
   }
 
   return (
-    <Card className="w-full">
-      <CardHeader>
-        <CardTitle>Anamnese Digital</CardTitle>
-        <CardDescription>
-          Preencha o formulário de saúde para avaliarmos as condições para o bronzeamento
-        </CardDescription>
-        <div className="w-full bg-gray-200 h-2 mt-4 rounded-full overflow-hidden">
-          <div 
-            className="h-full bg-bronze-500 transition-all duration-300" 
-            style={{ 
-              width: `${((currentStep >= questions.length ? questions.length : currentStep) / questions.length) * 100}%` 
-            }}
-          ></div>
-        </div>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        {warnings.length > 0 && (
-          <Alert className="bg-amber-50 border-amber-200">
-            <AlertTitle className="text-amber-800">Atenção às contraindicações</AlertTitle>
-            <AlertDescription className="text-amber-700">
-              <ul className="list-disc pl-4 space-y-1 mt-2">
-                {warnings.map((warning, index) => (
-                  <li key={index}>{warning}</li>
-                ))}
-              </ul>
-            </AlertDescription>
-          </Alert>
-        )}
+    <div className="space-y-6">
+      <AnamnesisWelcomeMessage />
+      
+      <Card className="w-full">
+        <CardHeader>
+          <CardTitle>Anamnese Digital</CardTitle>
+          <CardDescription>
+            Preencha o formulário de saúde para avaliarmos as condições para o bronzeamento
+          </CardDescription>
+          <div className="w-full bg-gray-200 h-2 mt-4 rounded-full overflow-hidden">
+            <div 
+              className="h-full bg-bronze-500 transition-all duration-300" 
+              style={{ 
+                width: `${((currentStep >= questions.length ? questions.length : currentStep) / questions.length) * 100}%` 
+              }}
+            ></div>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          {warnings.length > 0 && (
+            <Alert className="bg-amber-50 border-amber-200">
+              <AlertTitle className="text-amber-800">Atenção às contraindicações</AlertTitle>
+              <AlertDescription className="text-amber-700">
+                <ul className="list-disc pl-4 space-y-1 mt-2">
+                  {warnings.map((warning, index) => (
+                    <li key={index}>{warning}</li>
+                  ))}
+                </ul>
+              </AlertDescription>
+            </Alert>
+          )}
 
-        {currentStep < questions.length ? (
-          <div className="space-y-4 animate-fade-in">
-            <h3 className="text-lg font-medium">
-              {questions[currentStep].question}
-            </h3>
-            {renderQuestionInput(questions[currentStep])}
-          </div>
-        ) : (
-          <div className="space-y-6 animate-fade-in">
-            <h3 className="text-lg font-medium">Assinatura Digital</h3>
-            <p className="text-sm text-gray-500">
-              Ao assinar abaixo, você confirma que todas as informações fornecidas são verdadeiras e que está ciente dos riscos e contraindicações para o procedimento de bronzeamento.
-            </p>
-            
-            <DigitalSignature onChange={handleSignatureChange} />
-            
-            <Separator />
-            
-            <div className="text-sm">
-              <p className="font-medium mb-2">Termo de responsabilidade:</p>
-              <p className="text-gray-600">
-                Declaro estar ciente de que o bronzeamento artificial expõe a pele à radiação ultravioleta, que pode causar envelhecimento precoce da pele, alterações na textura da pele, e, em alguns casos, aumentar o risco de câncer de pele. Certifico que as informações fornecidas neste formulário são verdadeiras e estou ciente das contraindicações apresentadas.
-              </p>
+          {currentStep < questions.length ? (
+            <div className="space-y-4 animate-fade-in">
+              <h3 className="text-lg font-medium">
+                {questions[currentStep].question}
+              </h3>
+              {renderQuestionInput(questions[currentStep])}
             </div>
-          </div>
-        )}
-      </CardContent>
-      <CardFooter className="flex justify-between">
-        <Button
-          variant="outline"
-          onClick={handlePrevious}
-          disabled={currentStep === 0}
-        >
-          Voltar
-        </Button>
-        
-        {currentStep < questions.length ? (
-          <Button 
-            onClick={handleNext}
-            className="bg-bronze-500 hover:bg-bronze-600"
+          ) : (
+            <div className="space-y-6 animate-fade-in">
+              <h3 className="text-lg font-medium">Assinatura Digital</h3>
+              <p className="text-sm text-gray-500">
+                Ao assinar abaixo, você confirma que todas as informações fornecidas são verdadeiras e que está ciente dos riscos e contraindicações para o procedimento de bronzeamento.
+              </p>
+              
+              <DigitalSignature onChange={handleSignatureChange} />
+              
+              <Separator />
+              
+              <div className="text-sm">
+                <p className="font-medium mb-2">Termo de responsabilidade:</p>
+                <p className="text-gray-600">
+                  Declaro estar ciente de que o bronzeamento artificial expõe a pele à radiação ultravioleta, que pode causar envelhecimento precoce da pele, alterações na textura da pele, e, em alguns casos, aumentar o risco de câncer de pele. Certifico que as informações fornecidas neste formulário são verdadeiras e estou ciente das contraindicações apresentadas.
+                </p>
+              </div>
+            </div>
+          )}
+        </CardContent>
+        <CardFooter className="flex justify-between">
+          <Button
+            variant="outline"
+            onClick={handlePrevious}
+            disabled={currentStep === 0}
           >
-            Próxima
+            Voltar
           </Button>
-        ) : (
-          <Button 
-            onClick={handleSubmit}
-            className="bg-bronze-500 hover:bg-bronze-600"
-            disabled={isSubmitting || !signature}
-          >
-            {isSubmitting ? "Gerando Ficha..." : "Gerar Ficha de Anamnese"}
-          </Button>
-        )}
-      </CardFooter>
-    </Card>
+          
+          {currentStep < questions.length ? (
+            <Button 
+              onClick={handleNext}
+              className="bg-bronze-500 hover:bg-bronze-600"
+            >
+              Próxima
+            </Button>
+          ) : (
+            <Button 
+              onClick={handleSubmit}
+              className="bg-bronze-500 hover:bg-bronze-600"
+              disabled={isSubmitting || !signature}
+            >
+              {isSubmitting ? "Gerando Ficha..." : "Gerar Ficha de Anamnese"}
+            </Button>
+          )}
+        </CardFooter>
+      </Card>
+    </div>
   );
 };
 
