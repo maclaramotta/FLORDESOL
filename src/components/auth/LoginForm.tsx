@@ -1,16 +1,18 @@
 
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
+import { useAnamnesisValidation } from "@/hooks/useAnamnesisValidation";
 
 const LoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,12 +28,22 @@ const LoginForm = () => {
     try {
       // Mock login - replace with actual authentication
       await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Mock successful authentication
+      const mockUserId = "mock-client-123";
       toast.success("Login realizado com sucesso!");
       
-      // Here you would typically redirect the user
-      // For now, we'll just clear the form
-      setEmail("");
-      setPassword("");
+      // Check anamnesis status after successful login
+      const anamnesisStatus = localStorage.getItem(`anamnesis_${mockUserId}`);
+      
+      if (anamnesisStatus) {
+        // Anamnesis completed - redirect to main dashboard
+        navigate("/clients");
+      } else {
+        // Anamnesis not completed - redirect to anamnesis form
+        navigate("/anamnesis");
+      }
+      
     } catch (error) {
       toast.error("Falha ao realizar login. Tente novamente.");
     } finally {

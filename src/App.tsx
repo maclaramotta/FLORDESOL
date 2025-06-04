@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -16,6 +15,7 @@ import Scheduling from "./pages/Scheduling";
 import RegisterForm from "./components/auth/RegisterForm";
 import BronzeSimulator from "./pages/BronzeSimulator";
 import AnamnesisGuard from "./components/auth/AnamnesisGuard";
+import Dashboard from "./pages/Dashboard";
 
 // Feature pages
 import FeaturesOverview from "./pages/features/FeaturesOverview";
@@ -71,6 +71,15 @@ const App = () => (
           <Route path="/privacy" element={<MainLayout><div className="container mx-auto px-4 py-12">Política de Privacidade</div></MainLayout>} />
           <Route path="/terms" element={<MainLayout><div className="container mx-auto px-4 py-12">Termos de Uso</div></MainLayout>} />
           <Route path="/lgpd" element={<MainLayout><div className="container mx-auto px-4 py-12">LGPD</div></MainLayout>} />
+
+          {/* Dashboard - main panel after login */}
+          <Route path="/dashboard" element={
+            <MainLayout>
+              <AnamnesisGuard>
+                <Dashboard />
+              </AnamnesisGuard>
+            </MainLayout>
+          } />
 
           {/* Protected routes - require anamnesis check */}
           <Route path="/anamnesis" element={
