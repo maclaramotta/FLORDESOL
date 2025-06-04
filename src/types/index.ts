@@ -60,7 +60,7 @@ export type Appointment = {
   id: string;
   clientId: string;
   date: string;
-  status: "scheduled" | "completed" | "canceled" | "no-show";
+  status: "scheduled" | "confirmed" | "completed" | "canceled" | "no-show";
   bronzingMethod: BronzingMethod;
   duration: number;
   professionalId: string;
