@@ -6,7 +6,6 @@ import {
   Calendar, 
   User, 
   Heart, 
-  Store, 
   MessageSquare, 
   Sun
 } from "lucide-react";
@@ -40,12 +39,11 @@ const HeroSection = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 max-w-4xl mx-auto mt-12">
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 max-w-4xl mx-auto mt-12">
           {[
             { icon: <Calendar className="h-6 w-6" />, label: "Agendar Sessão", path: "/appointments" },
             { icon: <User className="h-6 w-6" />, label: "Perfil", path: "/clients" },
             { icon: <Heart className="h-6 w-6" />, label: "Cuidados", path: "/features/security" },
-            { icon: <Store className="h-6 w-6" />, label: "Loja", path: "/store" },
             { icon: <MessageSquare className="h-6 w-6" />, label: "Chat / Suporte", path: "/support" }
           ].map((item, index) => (
             <Link 

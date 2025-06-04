@@ -3,7 +3,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Calendar, User, Stethoscope, ShoppingBag, MessageCircle, FileText, Bell } from "lucide-react";
+import { Calendar, User, Stethoscope, MessageCircle, FileText, Bell } from "lucide-react";
 
 const Dashboard = () => {
   return (
@@ -95,23 +95,6 @@ const Dashboard = () => {
           <CardContent>
             <Button asChild variant="outline" className="w-full">
               <Link to="/professionals">Ver Equipe</Link>
-            </Button>
-          </CardContent>
-        </Card>
-
-        <Card className="hover:shadow-lg transition-shadow">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <ShoppingBag className="h-5 w-5 text-bronze-500" />
-              Loja
-            </CardTitle>
-            <CardDescription>
-              Produtos para bronzeamento e moda praia
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button asChild variant="outline" className="w-full">
-              <Link to="/store">Explorar Loja</Link>
             </Button>
           </CardContent>
         </Card>
