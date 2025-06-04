@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -69,21 +68,7 @@ const TodayAppointments = () => {
     setSendingAlert(appointment.id);
     
     try {
-      const message = `Olá ${appointment.clientName}! 🌞
-
-Estamos confirmando seu bronzeamento marcado para hoje, ${formatDate(appointment.date)} às ${formatTime(appointment.date)}.
-
-📋 Detalhes:
-• Tipo: ${appointment.bronzingMethod}
-• Duração: ${appointment.duration} minutos
-
-Por favor, responda com:
-✅ para confirmar
-❌ para cancelar
-
-Aguardamos você! 😊
-
-*Flor de Sol - Studio de Bronzeamento*`;
+      const message = `🌞 Olá ${appointment.clientName}! Estamos confirmando seu bronze marcado para ${formatDate(appointment.date)} às ${formatTime(appointment.date)}. Por favor, responda ✅ para confirmar ou ❌ para cancelar. Se tiver dúvidas, fale conosco! ✨`;
 
       const encodedMessage = encodeURIComponent(message);
       const whatsappUrl = `https://api.whatsapp.com/send?phone=${appointment.clientPhone}&text=${encodedMessage}`;
