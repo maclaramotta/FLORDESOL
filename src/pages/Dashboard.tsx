@@ -3,7 +3,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Calendar, User, Stethoscope, ShoppingBag, MessageCircle, FileText } from "lucide-react";
+import { Calendar, User, Stethoscope, ShoppingBag, MessageCircle, FileText, Bell } from "lucide-react";
 
 const Dashboard = () => {
   return (
@@ -27,6 +27,23 @@ const Dashboard = () => {
           <CardContent>
             <Button asChild className="w-full bg-bronze-500 hover:bg-bronze-600">
               <Link to="/appointments">Agendar Sessão</Link>
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Card className="hover:shadow-lg transition-shadow">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Bell className="h-5 w-5 text-bronze-500" />
+              Alertas
+            </CardTitle>
+            <CardDescription>
+              Gerencie notificações de agendamentos
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button asChild className="w-full bg-bronze-500 hover:bg-bronze-600">
+              <Link to="/alerts">Gerenciar Alertas</Link>
             </Button>
           </CardContent>
         </Card>

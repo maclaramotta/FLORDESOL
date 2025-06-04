@@ -16,6 +16,7 @@ import RegisterForm from "./components/auth/RegisterForm";
 import BronzeSimulator from "./pages/BronzeSimulator";
 import AnamnesisGuard from "./components/auth/AnamnesisGuard";
 import Dashboard from "./pages/Dashboard";
+import AlertsPage from "./pages/AlertsPage";
 
 // Feature pages
 import FeaturesOverview from "./pages/features/FeaturesOverview";
@@ -104,6 +105,13 @@ const App = () => (
             <MainLayout>
               <AnamnesisGuard>
                 <Scheduling />
+              </AnamnesisGuard>
+            </MainLayout>
+          } />
+          <Route path="/alerts" element={
+            <MainLayout>
+              <AnamnesisGuard>
+                <AlertsPage />
               </AnamnesisGuard>
             </MainLayout>
           } />
