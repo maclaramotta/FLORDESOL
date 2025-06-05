@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Link } from "react-router-dom";
 import { MapPin } from "lucide-react";
@@ -22,7 +21,7 @@ const FooterSection = () => {
               className="flex items-center space-x-2 bg-bronze-600 hover:bg-bronze-700 text-white px-4 py-2 rounded-lg transition-colors"
             >
               <MapPin className="h-4 w-4" />
-              <span>Como Chegar 🚗</span>
+              <span>Como Chegar no Espaço ☀️</span>
             </button>
           </div>
           <div>
