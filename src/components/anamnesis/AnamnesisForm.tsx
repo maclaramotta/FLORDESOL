@@ -3,7 +3,6 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
@@ -209,14 +208,20 @@ const AnamnesisForm: React.FC<AnamnesisFormProps> = ({ clientId, onComplete }) =
     switch (question.type) {
       case "boolean":
         return (
-          <div className="flex items-center space-x-2">
-            <Switch 
-              id={question.id}
-              checked={response === true}
-              onCheckedChange={(checked) => handleResponse(question.id, checked)}
-            />
-            <Label htmlFor={question.id} className="text-base">Sim</Label>
-          </div>
+          <RadioGroup 
+            value={response === true ? "sim" : response === false ? "nao" : ""}
+            onValueChange={(value) => handleResponse(question.id, value === "sim")}
+            className="space-y-2"
+          >
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="sim" id={`${question.id}-sim`} />
+              <Label htmlFor={`${question.id}-sim`}>Sim</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="nao" id={`${question.id}-nao`} />
+              <Label htmlFor={`${question.id}-nao`}>Não</Label>
+            </div>
+          </RadioGroup>
         );
         
       case "text":
