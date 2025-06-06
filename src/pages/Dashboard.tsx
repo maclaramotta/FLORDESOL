@@ -4,13 +4,19 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar, User, Stethoscope, MessageCircle, FileText, Bell } from "lucide-react";
+import ClientQuickActions from "@/components/client/ClientQuickActions";
 
 const Dashboard = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">Bem-vinda ao Flor de Sol!</h1>
-        <p className="text-gray-600">Sua ficha de anamnese está completa. Agora você pode acessar todos os nossos serviços.</p>
+        <p className="text-gray-600">Gerencie seus agendamentos e acesse todos os nossos serviços.</p>
+      </div>
+
+      {/* Quick Actions Component */}
+      <div className="mb-8">
+        <ClientQuickActions />
       </div>
 
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">

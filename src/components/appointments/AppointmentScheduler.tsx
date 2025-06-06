@@ -4,11 +4,13 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { Appointment, BronzingMethod, Client } from "@/types";
 import { useNavigate } from "react-router-dom";
+import { MessageCircle, User, Phone, Mail } from "lucide-react";
 
 interface AppointmentSchedulerProps {
   client?: Client;
@@ -25,6 +27,9 @@ const AppointmentScheduler: React.FC<AppointmentSchedulerProps> = ({ client, onS
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [selectedTimeSlot, setSelectedTimeSlot] = useState<string | undefined>(undefined);
   const [selectedMethod, setSelectedMethod] = useState<BronzingMethod | undefined>(undefined);
+  const [clientName, setClientName] = useState(client?.name || "");
+  const [clientPhone, setClientPhone] = useState(client?.phone || "");
+  const [clientEmail, setClientEmail] = useState(client?.email || "");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showAnamnesisDialog, setShowAnamnesisDialog] = useState(false);
   const navigate = useNavigate();
@@ -55,8 +60,22 @@ const AppointmentScheduler: React.FC<AppointmentSchedulerProps> = ({ client, onS
     { id: BronzingMethod.CREAM, label: "Creme Bronzeador" },
   ];
 
+  const formatDateForWhatsApp = (date: Date) => {
+    return date.toLocaleDateString('pt-BR');
+  };
+
+  const generateWhatsAppLink = () => {
+    if (!selectedDate || !selectedTimeSlot || !clientName) return "";
+    
+    const phone = "5562999999999"; // Replace with actual phone number
+    const formattedDate = formatDateForWhatsApp(selectedDate);
+    const message = `Olá! Gostaria de completar minha ficha de anamnese para o bronze no dia ${formattedDate} às ${selectedTimeSlot}. Meu nome é ${clientName}.`;
+    
+    return `https://api.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(message)}`;
+  };
+
   const handleScheduleAppointment = async () => {
-    if (!selectedDate || !selectedTimeSlot || !selectedMethod) {
+    if (!selectedDate || !selectedTimeSlot || !selectedMethod || !clientName || !clientPhone) {
       toast.error("Por favor, preencha todos os campos obrigatórios");
       return;
     }
@@ -82,7 +101,7 @@ const AppointmentScheduler: React.FC<AppointmentSchedulerProps> = ({ client, onS
         updatedAt: new Date().toISOString(),
       };
       
-      toast.success("Agendamento realizado com sucesso!");
+      toast.success("🎉 Seu bronze foi agendado com sucesso!");
       
       if (onSchedule) {
         onSchedule(mockAppointment);
@@ -92,6 +111,9 @@ const AppointmentScheduler: React.FC<AppointmentSchedulerProps> = ({ client, onS
       setSelectedDate(undefined);
       setSelectedTimeSlot(undefined);
       setSelectedMethod(undefined);
+      setClientName("");
+      setClientPhone("");
+      setClientEmail("");
       
       // Show anamnesis dialog
       setShowAnamnesisDialog(true);
@@ -109,10 +131,10 @@ const AppointmentScheduler: React.FC<AppointmentSchedulerProps> = ({ client, onS
 
   const handleFillAnamnesisLater = () => {
     setShowAnamnesisDialog(false);
-    toast.success("✨ Obrigada por agendar com a gente! Você pode preencher sua ficha mais tarde se quiser.");
+    toast.success("Pronto! ✨ Se quiser, complete depois ou envie por WhatsApp.");
   };
 
-  const isScheduleDisabled = !selectedDate || !selectedTimeSlot || !selectedMethod || isSubmitting;
+  const isScheduleDisabled = !selectedDate || !selectedTimeSlot || !selectedMethod || !clientName || !clientPhone || isSubmitting;
 
   return (
     <>
@@ -120,10 +142,52 @@ const AppointmentScheduler: React.FC<AppointmentSchedulerProps> = ({ client, onS
         <CardHeader>
           <CardTitle>Agendar Sessão</CardTitle>
           <CardDescription>
-            Selecione a data, horário e método de bronzeamento para agendar sua sessão
+            Preencha seus dados e selecione data, horário e método de bronzeamento
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
+          {/* Client Information Section */}
+          <div className="space-y-4 p-4 bg-bronze-50 rounded-lg">
+            <h3 className="font-semibold text-bronze-800 flex items-center gap-2">
+              <User className="h-4 w-4" />
+              Seus Dados
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="name">Nome Completo *</Label>
+                <Input
+                  id="name"
+                  type="text"
+                  placeholder="Seu nome completo"
+                  value={clientName}
+                  onChange={(e) => setClientName(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="phone">Telefone/WhatsApp *</Label>
+                <Input
+                  id="phone"
+                  type="tel"
+                  placeholder="(62) 99999-9999"
+                  value={clientPhone}
+                  onChange={(e) => setClientPhone(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="email">E-mail (opcional)</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="seu@email.com"
+                  value={clientEmail}
+                  onChange={(e) => setClientEmail(e.target.value)}
+                />
+              </div>
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-4">
               <Label>Selecione uma data</Label>
@@ -202,7 +266,7 @@ const AppointmentScheduler: React.FC<AppointmentSchedulerProps> = ({ client, onS
       <Dialog open={showAnamnesisDialog} onOpenChange={setShowAnamnesisDialog}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-center">✨ Seu agendamento foi realizado com sucesso!</DialogTitle>
+            <DialogTitle className="text-center">🎉 Seu bronze foi agendado com sucesso!</DialogTitle>
             <DialogDescription className="text-center">
               Deseja preencher sua ficha de anamnese agora?
             </DialogDescription>
@@ -223,8 +287,18 @@ const AppointmentScheduler: React.FC<AppointmentSchedulerProps> = ({ client, onS
               onClick={handleFillAnamnesisLater}
               className="w-full"
             >
-              Depois
+              Não, mais tarde
             </Button>
+            {selectedDate && selectedTimeSlot && clientName && (
+              <Button 
+                variant="outline" 
+                onClick={() => window.open(generateWhatsAppLink(), '_blank')}
+                className="w-full text-green-600 border-green-300 hover:bg-green-50 flex items-center gap-2"
+              >
+                <MessageCircle className="h-4 w-4" />
+                Completar pelo WhatsApp
+              </Button>
+            )}
           </DialogFooter>
         </DialogContent>
       </Dialog>
