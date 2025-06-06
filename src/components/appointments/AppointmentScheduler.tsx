@@ -1,15 +1,14 @@
+
 import React, { useState } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertTriangle } from "lucide-react";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { Appointment, BronzingMethod, Client } from "@/types";
-import { useAnamnesisValidation } from "@/hooks/useAnamnesisValidation";
-import AnamnesisRequiredAlert from "./AnamnesisRequiredAlert";
+import { useNavigate } from "react-router-dom";
 
 interface AppointmentSchedulerProps {
   client?: Client;
@@ -27,11 +26,8 @@ const AppointmentScheduler: React.FC<AppointmentSchedulerProps> = ({ client, onS
   const [selectedTimeSlot, setSelectedTimeSlot] = useState<string | undefined>(undefined);
   const [selectedMethod, setSelectedMethod] = useState<BronzingMethod | undefined>(undefined);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showAnamnesisAlert, setShowAnamnesisAlert] = useState(false);
-
-  // Mock client ID - in real app this would come from authentication
-  const mockClientId = client?.id || "mock-client-123";
-  const { hasAnamnesis, isLoading } = useAnamnesisValidation(mockClientId);
+  const [showAnamnesisDialog, setShowAnamnesisDialog] = useState(false);
+  const navigate = useNavigate();
 
   // Mock time slots
   const timeSlots: TimeSlot[] = [
@@ -60,12 +56,6 @@ const AppointmentScheduler: React.FC<AppointmentSchedulerProps> = ({ client, onS
   ];
 
   const handleScheduleAppointment = async () => {
-    // Check anamnesis before proceeding
-    if (!hasAnamnesis) {
-      setShowAnamnesisAlert(true);
-      return;
-    }
-
     if (!selectedDate || !selectedTimeSlot || !selectedMethod) {
       toast.error("Por favor, preencha todos os campos obrigatórios");
       return;
@@ -102,6 +92,9 @@ const AppointmentScheduler: React.FC<AppointmentSchedulerProps> = ({ client, onS
       setSelectedDate(undefined);
       setSelectedTimeSlot(undefined);
       setSelectedMethod(undefined);
+      
+      // Show anamnesis dialog
+      setShowAnamnesisDialog(true);
     } catch (error) {
       toast.error("Erro ao agendar. Tente novamente.");
     } finally {
@@ -109,7 +102,17 @@ const AppointmentScheduler: React.FC<AppointmentSchedulerProps> = ({ client, onS
     }
   };
 
-  const isScheduleDisabled = !selectedDate || !selectedTimeSlot || !selectedMethod || isSubmitting || !hasAnamnesis;
+  const handleFillAnamnesisNow = () => {
+    setShowAnamnesisDialog(false);
+    navigate("/anamnesis");
+  };
+
+  const handleFillAnamnesisLater = () => {
+    setShowAnamnesisDialog(false);
+    toast.success("✨ Obrigada por agendar com a gente! Você pode preencher sua ficha mais tarde se quiser.");
+  };
+
+  const isScheduleDisabled = !selectedDate || !selectedTimeSlot || !selectedMethod || isSubmitting;
 
   return (
     <>
@@ -121,15 +124,6 @@ const AppointmentScheduler: React.FC<AppointmentSchedulerProps> = ({ client, onS
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
-          {!hasAnamnesis && !isLoading && (
-            <Alert className="bg-amber-50 border-amber-200">
-              <AlertTriangle className="h-4 w-4 text-amber-600" />
-              <AlertDescription className="text-amber-800">
-                ⚠️ Para agendar é obrigatório preencher sua ficha de anamnese primeiro.
-              </AlertDescription>
-            </Alert>
-          )}
-
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-4">
               <Label>Selecione uma data</Label>
@@ -142,9 +136,9 @@ const AppointmentScheduler: React.FC<AppointmentSchedulerProps> = ({ client, onS
                     // Disable past dates and Sundays
                     const today = new Date();
                     today.setHours(0, 0, 0, 0);
-                    return date < today || date.getDay() === 0 || !hasAnamnesis;
+                    return date < today || date.getDay() === 0;
                   }}
-                  className={`rounded-md border p-3 pointer-events-auto ${!hasAnamnesis ? 'opacity-50' : ''}`}
+                  className="rounded-md border p-3"
                 />
               </div>
             </div>
@@ -152,11 +146,8 @@ const AppointmentScheduler: React.FC<AppointmentSchedulerProps> = ({ client, onS
             <div className="space-y-6">
               <div className="space-y-4">
                 <Label>Método de Bronzeamento</Label>
-                <Select 
-                  onValueChange={(value) => setSelectedMethod(value as BronzingMethod)}
-                  disabled={!hasAnamnesis}
-                >
-                  <SelectTrigger className={`w-full ${!hasAnamnesis ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                <Select onValueChange={(value) => setSelectedMethod(value as BronzingMethod)}>
+                  <SelectTrigger className="w-full">
                     <SelectValue placeholder="Selecione o método" />
                   </SelectTrigger>
                   <SelectContent>
@@ -171,7 +162,7 @@ const AppointmentScheduler: React.FC<AppointmentSchedulerProps> = ({ client, onS
               
               <div className="space-y-4">
                 <Label>Horários disponíveis</Label>
-                {selectedDate && hasAnamnesis ? (
+                {selectedDate ? (
                   <div className="grid grid-cols-3 gap-2">
                     {timeSlots.map((slot) => (
                       <Button
@@ -189,11 +180,8 @@ const AppointmentScheduler: React.FC<AppointmentSchedulerProps> = ({ client, onS
                     ))}
                   </div>
                 ) : (
-                  <div className={`text-center p-4 border rounded-md bg-gray-50 text-gray-500 ${!hasAnamnesis ? 'opacity-50' : ''}`}>
-                    {!hasAnamnesis 
-                      ? "Preencha a anamnese para ver os horários disponíveis"
-                      : "Selecione uma data para ver os horários disponíveis"
-                    }
+                  <div className="text-center p-4 border rounded-md bg-gray-50 text-gray-500">
+                    Selecione uma data para ver os horários disponíveis
                   </div>
                 )}
               </div>
@@ -204,17 +192,42 @@ const AppointmentScheduler: React.FC<AppointmentSchedulerProps> = ({ client, onS
           <Button
             onClick={handleScheduleAppointment}
             disabled={isScheduleDisabled}
-            className={`ml-auto ${!hasAnamnesis ? 'opacity-50 cursor-not-allowed' : 'bg-bronze-500 hover:bg-bronze-600'}`}
+            className="ml-auto bg-bronze-500 hover:bg-bronze-600"
           >
-            {isSubmitting ? "Agendando..." : "Agendar Sessão"}
+            {isSubmitting ? "Agendando..." : "Agendar Agora"}
           </Button>
         </CardFooter>
       </Card>
 
-      <AnamnesisRequiredAlert 
-        isOpen={showAnamnesisAlert}
-        onClose={() => setShowAnamnesisAlert(false)}
-      />
+      <Dialog open={showAnamnesisDialog} onOpenChange={setShowAnamnesisDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-center">✨ Seu agendamento foi realizado com sucesso!</DialogTitle>
+            <DialogDescription className="text-center">
+              Deseja preencher sua ficha de anamnese agora?
+            </DialogDescription>
+          </DialogHeader>
+          <div className="text-center text-sm text-gray-600 py-4">
+            Preencher a ficha de anamnese é opcional, mas ajuda a gente a te atender melhor.
+            Se quiser, você pode fazer isso agora ou mais tarde pelo WhatsApp 💬
+          </div>
+          <DialogFooter className="flex-col gap-2">
+            <Button 
+              onClick={handleFillAnamnesisNow}
+              className="w-full bg-bronze-500 hover:bg-bronze-600"
+            >
+              Sim, preencher agora
+            </Button>
+            <Button 
+              variant="outline" 
+              onClick={handleFillAnamnesisLater}
+              className="w-full"
+            >
+              Depois
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 };
