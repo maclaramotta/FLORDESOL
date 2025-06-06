@@ -1,14 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { MapPin } from "lucide-react";
-
 const FooterSection = () => {
   const handleOpenMaps = () => {
     window.open("https://www.google.com/maps/search/?api=1&query=Rua+João+Rodrigues+Jota,+251,+Santos+Dumont,+Itumbiara+GO", "_blank");
   };
-
-  return (
-    <footer className="bg-gray-900 text-white py-12">
+  return <footer className="bg-gray-900 text-white py-12">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
@@ -16,10 +13,7 @@ const FooterSection = () => {
             <p className="text-gray-400 mb-4">
               Sistema completo para gestão de salões de bronzeamento
             </p>
-            <button
-              onClick={handleOpenMaps}
-              className="flex items-center space-x-2 bg-bronze-600 hover:bg-bronze-700 text-white px-4 py-2 rounded-lg transition-colors"
-            >
+            <button onClick={handleOpenMaps} className="flex items-center space-x-2 bg-bronze-600 hover:bg-bronze-700 text-white px-4 py-2 rounded-lg transition-colors">
               <MapPin className="h-4 w-4" />
               <span>Como Chegar no Espaço ☀️</span>
             </button>
@@ -62,7 +56,7 @@ const FooterSection = () => {
           <div>
             <h3 className="text-lg font-semibold mb-4">Contato</h3>
             <address className="text-gray-400 not-italic">
-              <p>contato@flordesol.com.br</p>
+              <p></p>
               <p>+55 (64) 9 9617-0209</p>
               <p>Rua João Rodrigues Jota, 251</p>
               <p>Santos Dumont, Itumbiara - GO</p>
@@ -73,8 +67,6 @@ const FooterSection = () => {
           <p>&copy; {new Date().getFullYear()} Flor de Sol. Todos os direitos reservados.</p>
         </div>
       </div>
-    </footer>
-  );
+    </footer>;
 };
-
 export default FooterSection;
