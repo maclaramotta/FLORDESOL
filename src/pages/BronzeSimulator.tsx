@@ -69,9 +69,8 @@ const BronzeSimulator = () => {
     
     setIsGenerating(true);
     
-    // Simulação de processamento (aqui você integraria com uma API de IA real)
+    // Simulação de processamento com filtro bronze
     setTimeout(() => {
-      // Por enquanto, vamos simular aplicando um filtro bronze básico
       setBronzedImage(originalImage);
       setIsGenerating(false);
     }, 2000);
@@ -89,7 +88,6 @@ const BronzeSimulator = () => {
   const sharePhoto = async () => {
     if (bronzedImage && navigator.share) {
       try {
-        // Converter base64 para blob
         const response = await fetch(bronzedImage);
         const blob = await response.blob();
         const file = new File([blob], 'bronze-simulado.jpg', { type: 'image/jpeg' });
@@ -101,12 +99,10 @@ const BronzeSimulator = () => {
         });
       } catch (error) {
         console.error('Erro ao compartilhar:', error);
-        // Fallback: copiar link da imagem
         navigator.clipboard.writeText(bronzedImage);
         alert('Imagem copiada para a área de transferência!');
       }
     } else {
-      // Fallback para navegadores que não suportam Web Share API
       navigator.clipboard.writeText(window.location.href);
       alert('Link copiado para a área de transferência!');
     }
@@ -118,23 +114,25 @@ const BronzeSimulator = () => {
         <div className="mb-10 text-center">
           <h1 className="text-4xl font-bold mb-6 tracking-tight">
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-bronze-600 to-bronze-800">
-              Simular Bronze
+              🎨 Simulador de Bronze
             </span>
           </h1>
           <p className="text-xl text-gray-700 mb-8">
-            Veja como você ficará com diferentes tons de bronzeado
+            Envie sua foto e veja como você ficará com diferentes tons de bronzeado 🌞
           </p>
         </div>
 
         <div className="grid lg:grid-cols-2 gap-8">
           {/* Controles */}
           <div className="space-y-6">
-            {/* Upload/Câmera */}
+            {/* Upload de Foto */}
             <Card>
               <CardHeader>
-                <CardTitle>📸 Enviar ou Tirar Foto</CardTitle>
+                <CardTitle className="flex items-center gap-2">
+                  📸 Envie sua foto para simular o bronze 🌞
+                </CardTitle>
                 <CardDescription>
-                  Escolha uma foto existente ou tire uma nova
+                  Escolha uma foto existente ou tire uma nova para começar
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -188,10 +186,10 @@ const BronzeSimulator = () => {
               </Card>
             )}
 
-            {/* Seleção de Tom */}
+            {/* Seleção de Intensidade */}
             <Card>
               <CardHeader>
-                <CardTitle>🎨 Tom do Bronze</CardTitle>
+                <CardTitle>🎨 Intensidade do Bronze</CardTitle>
                 <CardDescription>
                   Escolha a intensidade do bronzeado
                 </CardDescription>
@@ -200,21 +198,21 @@ const BronzeSimulator = () => {
                 <RadioGroup value={selectedTone} onValueChange={setSelectedTone}>
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="leve" id="leve" />
-                    <Label htmlFor="leve" className="font-medium">Leve</Label>
+                    <Label htmlFor="leve" className="font-medium">🌅 Leve</Label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="medio" id="medio" />
-                    <Label htmlFor="medio" className="font-medium">Médio</Label>
+                    <Label htmlFor="medio" className="font-medium">☀️ Médio</Label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="intenso" id="intenso" />
-                    <Label htmlFor="intenso" className="font-medium">Intenso</Label>
+                    <Label htmlFor="intenso" className="font-medium">🔥 Intenso</Label>
                   </div>
                 </RadioGroup>
               </CardContent>
             </Card>
 
-            {/* Botão Gerar */}
+            {/* Botão Simular */}
             <Button
               onClick={generateBronze}
               disabled={!originalImage || isGenerating}
@@ -224,10 +222,10 @@ const BronzeSimulator = () => {
               {isGenerating ? (
                 <>
                   <RotateCw className="h-4 w-4 mr-2 animate-spin" />
-                  Gerando Bronze...
+                  Simulando...
                 </>
               ) : (
-                "🔄 Gerar Bronze"
+                "✨ Simular agora"
               )}
             </Button>
 
@@ -258,17 +256,17 @@ const BronzeSimulator = () => {
           <div className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>👀 Preview</CardTitle>
+                <CardTitle>👀 Resultado da Simulação</CardTitle>
                 <CardDescription>
-                  Visualize o resultado do seu bronze
+                  Compare sua foto original com o bronze simulado
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
+                <div className="space-y-6">
                   {/* Imagem Original */}
                   {originalImage && (
                     <div>
-                      <h4 className="font-medium mb-2">Foto Original</h4>
+                      <h4 className="font-medium mb-2">📷 Foto Original</h4>
                       <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden">
                         <img
                           src={originalImage}
@@ -282,19 +280,24 @@ const BronzeSimulator = () => {
                   {/* Imagem Bronzeada */}
                   {bronzedImage && (
                     <div>
-                      <h4 className="font-medium mb-2">Com Bronze {selectedTone}</h4>
-                      <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden">
+                      <h4 className="font-medium mb-2 text-bronze-600">
+                        ✨ Seu bronze pode ficar assim! 😍
+                      </h4>
+                      <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden border-2 border-bronze-200">
                         <img
                           src={bronzedImage}
                           alt="Foto com bronze"
                           className="w-full h-full object-cover"
                           style={{
-                            filter: selectedTone === 'leve' ? 'sepia(0.3) saturate(1.2)' :
-                                   selectedTone === 'medio' ? 'sepia(0.5) saturate(1.4)' :
-                                   'sepia(0.7) saturate(1.6)'
+                            filter: selectedTone === 'leve' ? 'sepia(0.3) saturate(1.2) brightness(1.1)' :
+                                   selectedTone === 'medio' ? 'sepia(0.5) saturate(1.4) brightness(1.05)' :
+                                   'sepia(0.7) saturate(1.6) brightness(1.0)'
                           }}
                         />
                       </div>
+                      <p className="text-center text-bronze-600 font-medium mt-2">
+                        Bronze {selectedTone} aplicado! 🌞
+                      </p>
                     </div>
                   )}
 
@@ -310,6 +313,26 @@ const BronzeSimulator = () => {
                 </div>
               </CardContent>
             </Card>
+
+            {/* Dica de agendamento */}
+            {bronzedImage && (
+              <Card className="bg-bronze-50 border-bronze-200">
+                <CardContent className="p-4">
+                  <h4 className="font-semibold text-bronze-800 mb-2">
+                    💡 Gostou do resultado?
+                  </h4>
+                  <p className="text-bronze-700 text-sm mb-3">
+                    Agende sua sessão de bronzeamento e conquiste esse visual!
+                  </p>
+                  <Button 
+                    className="w-full bg-bronze-500 hover:bg-bronze-600"
+                    onClick={() => window.location.href = '/appointments'}
+                  >
+                    🗓️ Agendar Minha Sessão
+                  </Button>
+                </CardContent>
+              </Card>
+            )}
           </div>
         </div>
       </div>
