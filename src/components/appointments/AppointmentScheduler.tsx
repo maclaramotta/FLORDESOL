@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -11,6 +10,8 @@ import { toast } from "sonner";
 import { Appointment, BronzingMethod, Client } from "@/types";
 import { useNavigate } from "react-router-dom";
 import { MessageCircle, User, Phone, Mail } from "lucide-react";
+import WeatherForecast from "@/components/weather/WeatherForecast";
+import { useWeatherForecast } from "@/hooks/useWeatherForecast";
 
 interface AppointmentSchedulerProps {
   client?: Client;
@@ -33,6 +34,7 @@ const AppointmentScheduler: React.FC<AppointmentSchedulerProps> = ({ client, onS
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showAnamnesisDialog, setShowAnamnesisDialog] = useState(false);
   const navigate = useNavigate();
+  const { weatherData } = useWeatherForecast();
 
   // Mock time slots
   const timeSlots: TimeSlot[] = [
@@ -72,6 +74,12 @@ const AppointmentScheduler: React.FC<AppointmentSchedulerProps> = ({ client, onS
     const message = `Olá! Gostaria de completar minha ficha de anamnese para o bronze no dia ${formattedDate} às ${selectedTimeSlot}. Meu nome é ${clientName}.`;
     
     return `https://api.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(message)}`;
+  };
+
+  // Function to check if a date is a sunny day
+  const isSunnyDay = (date: Date) => {
+    const dateString = date.toISOString().split('T')[0];
+    return weatherData.some(day => day.date === dateString && day.isSunny);
   };
 
   const handleScheduleAppointment = async () => {
@@ -203,8 +211,23 @@ const AppointmentScheduler: React.FC<AppointmentSchedulerProps> = ({ client, onS
                     return date < today || date.getDay() === 0;
                   }}
                   className="rounded-md border p-3"
+                  modifiers={{
+                    sunny: (date) => isSunnyDay(date)
+                  }}
+                  modifiersStyles={{
+                    sunny: { 
+                      backgroundColor: '#fef3c7', 
+                      color: '#d97706',
+                      fontWeight: 'bold'
+                    }
+                  }}
                 />
               </div>
+              {selectedDate && isSunnyDay(selectedDate) && (
+                <div className="text-center text-yellow-700 bg-yellow-50 border border-yellow-200 rounded-lg p-2">
+                  ☀️ Dia perfeito para bronzeamento!
+                </div>
+              )}
             </div>
             
             <div className="space-y-6">
@@ -262,6 +285,9 @@ const AppointmentScheduler: React.FC<AppointmentSchedulerProps> = ({ client, onS
           </Button>
         </CardFooter>
       </Card>
+
+      {/* Weather Forecast Component */}
+      <WeatherForecast />
 
       <Dialog open={showAnamnesisDialog} onOpenChange={setShowAnamnesisDialog}>
         <DialogContent className="max-w-md">
