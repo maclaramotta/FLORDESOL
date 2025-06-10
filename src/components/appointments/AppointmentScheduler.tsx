@@ -67,7 +67,7 @@ const AppointmentScheduler: React.FC<AppointmentSchedulerProps> = ({ client, onS
   const generateWhatsAppLink = () => {
     if (!selectedDate || !selectedTimeSlot || !clientName) return "";
     
-    const phone = "5562999999999"; // Replace with actual phone number
+    const phone = "5564996170209";
     const formattedDate = formatDateForWhatsApp(selectedDate);
     const message = `Olá! Gostaria de completar minha ficha de anamnese para o bronze no dia ${formattedDate} às ${selectedTimeSlot}. Meu nome é ${clientName}.`;
     
@@ -169,7 +169,7 @@ const AppointmentScheduler: React.FC<AppointmentSchedulerProps> = ({ client, onS
                 <Input
                   id="phone"
                   type="tel"
-                  placeholder="(62) 99999-9999"
+                  placeholder="(64) 99999-9999"
                   value={clientPhone}
                   onChange={(e) => setClientPhone(e.target.value)}
                   required

@@ -7,7 +7,7 @@ import { MessageCircle } from "lucide-react";
 
 const NewAppointmentTab = () => {
   const handleWhatsAppContact = () => {
-    window.open("https://wa.me/5562999999999?text=Oi%2C+quero+tirar+uma+d%C3%BAvida+sobre+meu+bronze+🌞", "_blank");
+    window.open("https://wa.me/5564996170209?text=Oi%2C+quero+tirar+uma+d%C3%BAvida+sobre+meu+bronze+🌞", "_blank");
   };
 
   return (

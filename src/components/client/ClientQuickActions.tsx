@@ -6,7 +6,7 @@ import { Calendar, FileText, MapPin, MessageCircle, User, Bell } from "lucide-re
 import { Link } from "react-router-dom";
 
 const ClientQuickActions = () => {
-  const whatsappNumber = "5562999999999"; // Replace with actual number
+  const whatsappNumber = "5564996170209";
   const address = "Rua João Rodrigues Jota, 251, Santos Dumont, Itumbiara GO";
   
   const quickActions = [
