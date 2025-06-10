@@ -1,51 +1,76 @@
 
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
-import { useAnamnesisValidation } from "@/hooks/useAnamnesisValidation";
 
 const LoginForm = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [nome, setNome] = useState("");
+  const [celular, setCelular] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+
+  const formatPhoneNumber = (value: string) => {
+    // Remove all non-numeric characters
+    const numericValue = value.replace(/\D/g, '');
+    
+    // Apply mask (XX) XXXXX-XXXX
+    if (numericValue.length <= 11) {
+      return numericValue
+        .replace(/(\d{2})(\d)/, '($1) $2')
+        .replace(/(\d{5})(\d)/, '$1-$2');
+    }
+    
+    return value;
+  };
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatPhoneNumber(e.target.value);
+    setCelular(formatted);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
     // Simple validation
-    if (!email || !password) {
+    if (!nome || !celular) {
       toast.error("Por favor, preencha todos os campos");
       setIsLoading(false);
       return;
     }
 
+    // Validate phone number (should have 11 digits)
+    const numericPhone = celular.replace(/\D/g, '');
+    if (numericPhone.length !== 11) {
+      toast.error("Por favor, insira um número de celular válido");
+      setIsLoading(false);
+      return;
+    }
+
     try {
-      // Mock login - replace with actual authentication
+      // Simulate saving to database
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // Mock successful authentication
-      const mockUserId = "mock-client-123";
-      toast.success("Login realizado com sucesso!");
+      // Save client data to localStorage (temporary solution)
+      const clientData = {
+        nome: nome,
+        celular: celular,
+        id: `client-${Date.now()}`, // Generate simple ID
+        loginDate: new Date().toISOString()
+      };
       
-      // Check anamnesis status after successful login
-      const anamnesisStatus = localStorage.getItem(`anamnesis_${mockUserId}`);
+      localStorage.setItem('cliente_atual', JSON.stringify(clientData));
+      toast.success(`Bem-vinda, ${nome}!`);
       
-      if (anamnesisStatus) {
-        // Anamnesis completed - redirect to main dashboard
-        navigate("/clients");
-      } else {
-        // Anamnesis not completed - redirect to anamnesis form
-        navigate("/anamnesis");
-      }
+      // Navigate to appointments page instead of checking anamnesis
+      navigate("/appointments");
       
     } catch (error) {
-      toast.error("Falha ao realizar login. Tente novamente.");
+      toast.error("Falha ao fazer login. Tente novamente.");
     } finally {
       setIsLoading(false);
     }
@@ -54,44 +79,38 @@ const LoginForm = () => {
   return (
     <Card className="w-full max-w-md mx-auto">
       <CardHeader>
-        <CardTitle>Login</CardTitle>
+        <CardTitle>Acesso Rápido</CardTitle>
         <CardDescription>
-          Entre na sua conta para acessar o sistema
+          Digite seu nome e celular para acessar seus agendamentos
         </CardDescription>
       </CardHeader>
       <form onSubmit={handleSubmit}>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="nome">Nome Completo</Label>
             <Input
-              id="email"
-              type="email"
-              placeholder="seuemail@exemplo.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              id="nome"
+              type="text"
+              placeholder="Digite seu nome completo"
+              value={nome}
+              onChange={(e) => setNome(e.target.value)}
               required
             />
           </div>
           <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <Label htmlFor="password">Senha</Label>
-              <Link
-                to="/forgot-password"
-                className="text-sm text-bronze-500 hover:text-bronze-600"
-              >
-                Esqueceu a senha?
-              </Link>
-            </div>
+            <Label htmlFor="celular">Celular</Label>
             <Input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              id="celular"
+              type="tel"
+              placeholder="(00) 00000-0000"
+              value={celular}
+              onChange={handlePhoneChange}
+              maxLength={15}
               required
             />
           </div>
         </CardContent>
-        <CardFooter className="flex flex-col space-y-4">
+        <CardContent>
           <Button
             type="submit"
             className="w-full bg-bronze-500 hover:bg-bronze-600"
@@ -99,13 +118,7 @@ const LoginForm = () => {
           >
             {isLoading ? "Entrando..." : "Entrar"}
           </Button>
-          <div className="text-center text-sm">
-            Não tem uma conta?{" "}
-            <Link to="/register" className="text-bronze-500 hover:text-bronze-600 font-medium">
-              Cadastre-se
-            </Link>
-          </div>
-        </CardFooter>
+        </CardContent>
       </form>
     </Card>
   );
