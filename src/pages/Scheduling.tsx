@@ -3,8 +3,9 @@ import React, { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CalendarPlus, Clock, Bell, CalendarCheck, Calendar, MessageCircle } from "lucide-react";
+import { CalendarPlus, Clock, Bell, CalendarCheck, Calendar, MessageCircle, FileText, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
+import { Link } from "react-router-dom";
 import AppointmentScheduler from "@/components/appointments/AppointmentScheduler";
 
 const Scheduling = () => {
@@ -17,14 +18,16 @@ const Scheduling = () => {
       type: "Bronzeamento em Cabine",
       duration: "20 minutos",
       date: "28 Maio, 2025",
-      time: "15:30"
+      time: "15:30",
+      status: "Confirmado"
     },
     {
       id: 2,
       type: "Bronzeamento Natural",
       duration: "30 minutos",
       date: "10 Junho, 2025",
-      time: "10:00"
+      time: "10:00",
+      status: "Pendente"
     }
   ];
 
@@ -35,21 +38,24 @@ const Scheduling = () => {
       type: "Bronzeamento Spray",
       duration: "15 minutos",
       date: "15 Abril, 2025",
-      time: "14:00"
+      time: "14:00",
+      status: "Concluído"
     },
     {
       id: 102,
       type: "Bronzeamento em Cabine",
       duration: "20 minutos",
       date: "1 Março, 2025",
-      time: "11:30"
+      time: "11:30",
+      status: "Concluído"
     },
     {
       id: 103,
       type: "Bronzeamento Natural",
       duration: "25 minutos",
       date: "15 Fevereiro, 2025",
-      time: "09:45"
+      time: "09:45",
+      status: "Concluído"
     }
   ];
 
@@ -66,18 +72,28 @@ const Scheduling = () => {
     window.open("https://wa.me/5564996170209?text=Oi%2C+quero+tirar+uma+d%C3%BAvida+sobre+meu+bronze+🌞", "_blank");
   };
 
+  const handleWhatsAppAppointment = (date: string, time: string) => {
+    const message = `Olá!%20Sobre%20meu%20agendamento%20em%20${encodeURIComponent(date)}%20às%20${encodeURIComponent(time)}`;
+    window.open(`https://wa.me/5564996170209?text=${message}`, "_blank");
+  };
+
+  const handleWhatsAppReschedule = (date: string, time: string) => {
+    const message = `Gostaria%20de%20reagendar%20meu%20agendamento%20de%20${encodeURIComponent(date)}%20às%20${encodeURIComponent(time)}`;
+    window.open(`https://wa.me/5564996170209?text=${message}`, "_blank");
+  };
+
   return (
     <div className="container mx-auto px-4 py-12">
       <div className="max-w-4xl mx-auto">
         <div className="mb-10">
           <h1 className="text-4xl font-bold mb-6 tracking-tight text-center">
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-bronze-600 to-bronze-800">
-              Agendamento de Bronzeamento
+              Meus Agendamentos
             </span>
           </h1>
           <p className="text-xl text-gray-700 mb-8 text-center max-w-2xl mx-auto">
-            Escolha o horário ideal para o seu bronzeamento e receba lembretes personalizados 
-            para uma experiência perfeita.
+            Gerencie seus agendamentos de bronzeamento e mantenha-se sempre em dia 
+            com seus horários marcados.
           </p>
         </div>
 
@@ -162,45 +178,68 @@ const Scheduling = () => {
           <TabsContent value="upcoming">
             <Card className="border shadow-md">
               <CardContent className="pt-6">
+                <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg flex items-center gap-3">
+                  <AlertTriangle className="h-5 w-5 text-yellow-600" />
+                  <p className="text-yellow-800 text-sm">
+                    <strong>⚠️ Você será lembrada 24h antes no WhatsApp para confirmar.</strong>
+                  </p>
+                </div>
+
                 <h3 className="text-xl font-semibold mb-4">Seus Próximos Agendamentos</h3>
                 
                 <div className="space-y-4">
                   {upcomingAppointments.map(appointment => (
-                    <div key={appointment.id} className="p-4 border rounded-lg bg-white flex justify-between items-center">
-                      <div className="flex items-center gap-4">
-                        <div className="h-12 w-12 rounded-full bg-bronze-100 flex items-center justify-center">
-                          <Bell className="h-6 w-6 text-bronze-600" />
+                    <div key={appointment.id} className="p-6 border rounded-lg bg-white shadow-sm">
+                      <div className="flex justify-between items-start mb-4">
+                        <div className="flex items-center gap-4">
+                          <div className="h-12 w-12 rounded-full bg-bronze-100 flex items-center justify-center">
+                            <Bell className="h-6 w-6 text-bronze-600" />
+                          </div>
+                          <div>
+                            <h4 className="font-medium text-lg">{appointment.type}</h4>
+                            <p className="text-gray-500">Sessão: {appointment.duration}</p>
+                            <p className="text-sm font-medium text-bronze-600">Status: {appointment.status}</p>
+                          </div>
                         </div>
-                        <div>
-                          <h4 className="font-medium">{appointment.type}</h4>
-                          <p className="text-gray-500">Sessão: {appointment.duration}</p>
+                        <div className="text-right">
+                          <div className="font-medium text-lg">{appointment.date}</div>
+                          <div className="text-sm text-gray-500">{appointment.time}</div>
                         </div>
                       </div>
-                      <div className="text-right">
-                        <div className="font-medium">{appointment.date}</div>
-                        <div className="text-sm text-gray-500">{appointment.time}</div>
+
+                      <div className="flex flex-wrap gap-3 mt-4">
+                        <Button 
+                          asChild
+                          variant="outline" 
+                          className="flex items-center gap-2"
+                        >
+                          <Link to="/anamnesis">
+                            <FileText className="h-4 w-4" />
+                            📋 Preencher Ficha
+                          </Link>
+                        </Button>
+
+                        <Button 
+                          variant="outline"
+                          className="flex items-center gap-2 text-green-600 border-green-300 hover:bg-green-50"
+                          onClick={() => handleWhatsAppAppointment(appointment.date, appointment.time)}
+                        >
+                          <MessageCircle className="h-4 w-4" />
+                          Falar com a gente 💬
+                        </Button>
+
+                        <Button 
+                          variant="outline"
+                          className="flex items-center gap-2 text-orange-600 border-orange-300 hover:bg-orange-50"
+                          onClick={() => handleWhatsAppReschedule(appointment.date, appointment.time)}
+                        >
+                          <Calendar className="h-4 w-4" />
+                          Cancelar/Reagendar
+                        </Button>
                       </div>
                     </div>
                   ))}
                 </div>
-                
-                {upcomingAppointments.length > 0 && (
-                  <div className="mt-6 flex flex-col sm:flex-row justify-center gap-4">
-                    <Button 
-                      variant="outline" 
-                      className="text-bronze-600 border-bronze-300"
-                      onClick={() => handleCancelAppointment(upcomingAppointments[0].id)}
-                    >
-                      Cancelar Agendamento
-                    </Button>
-                    <Button 
-                      className="bg-bronze-500 hover:bg-bronze-600"
-                      onClick={() => handleReschedule(upcomingAppointments[0].id)}
-                    >
-                      Reagendar Horário
-                    </Button>
-                  </div>
-                )}
                 
                 {upcomingAppointments.length === 0 && (
                   <div className="text-center py-8">
@@ -232,6 +271,7 @@ const Scheduling = () => {
                         <div>
                           <h4 className="font-medium">{appointment.type}</h4>
                           <p className="text-gray-500">Sessão: {appointment.duration}</p>
+                          <p className="text-sm text-green-600">Status: {appointment.status}</p>
                         </div>
                       </div>
                       <div className="text-right">
