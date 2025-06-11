@@ -8,7 +8,8 @@ import {
   Heart, 
   MessageSquare, 
   Sun,
-  MapPin
+  MapPin,
+  Camera
 } from "lucide-react";
 import MainNavigation from "./MainNavigation";
 
