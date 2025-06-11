@@ -32,7 +32,7 @@ const AppointmentScheduler: React.FC<AppointmentSchedulerProps> = ({ client, onS
   const [clientPhone, setClientPhone] = useState(client?.phone || "");
   const [clientEmail, setClientEmail] = useState(client?.email || "");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showAnamnesisDialog, setShowAnamnesisDialog] = useState(false);
+  const [showSuccessDialog, setShowSuccessDialog] = useState(false);
   const navigate = useNavigate();
   const { weatherData } = useWeatherForecast();
 
@@ -109,8 +109,6 @@ const AppointmentScheduler: React.FC<AppointmentSchedulerProps> = ({ client, onS
         updatedAt: new Date().toISOString(),
       };
       
-      toast.success("🎉 Seu bronze foi agendado com sucesso!");
-      
       if (onSchedule) {
         onSchedule(mockAppointment);
       }
@@ -123,8 +121,8 @@ const AppointmentScheduler: React.FC<AppointmentSchedulerProps> = ({ client, onS
       setClientPhone("");
       setClientEmail("");
       
-      // Show anamnesis dialog
-      setShowAnamnesisDialog(true);
+      // Show success dialog
+      setShowSuccessDialog(true);
     } catch (error) {
       toast.error("Erro ao agendar. Tente novamente.");
     } finally {
@@ -133,12 +131,12 @@ const AppointmentScheduler: React.FC<AppointmentSchedulerProps> = ({ client, onS
   };
 
   const handleFillAnamnesisNow = () => {
-    setShowAnamnesisDialog(false);
+    setShowSuccessDialog(false);
     navigate("/anamnesis");
   };
 
   const handleFillAnamnesisLater = () => {
-    setShowAnamnesisDialog(false);
+    setShowSuccessDialog(false);
     toast.success("Pronto! ✨ Se quiser, complete depois ou envie por WhatsApp.");
   };
 
@@ -281,7 +279,7 @@ const AppointmentScheduler: React.FC<AppointmentSchedulerProps> = ({ client, onS
             disabled={isScheduleDisabled}
             className="ml-auto bg-bronze-500 hover:bg-bronze-600"
           >
-            {isSubmitting ? "Agendando..." : "Agendar Agora"}
+            {isSubmitting ? "Agendando..." : "Agendar Agora ☀️"}
           </Button>
         </CardFooter>
       </Card>
@@ -289,16 +287,16 @@ const AppointmentScheduler: React.FC<AppointmentSchedulerProps> = ({ client, onS
       {/* Weather Forecast Component */}
       <WeatherForecast />
 
-      <Dialog open={showAnamnesisDialog} onOpenChange={setShowAnamnesisDialog}>
+      <Dialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-center">🎉 Seu bronze foi agendado com sucesso!</DialogTitle>
+            <DialogTitle className="text-center text-xl">🎉 Agendamento confirmado!</DialogTitle>
             <DialogDescription className="text-center">
-              Deseja preencher sua ficha de anamnese agora?
+              Seu bronze foi agendado com sucesso! Deseja preencher sua ficha de anamnese agora?
             </DialogDescription>
           </DialogHeader>
           <div className="text-center text-sm text-gray-600 py-4">
-            Preencher a ficha de anamnese é opcional, mas ajuda a gente a te atender melhor.
+            📝 Preencher a ficha de anamnese é opcional, mas ajuda a gente a te atender melhor.
             Se quiser, você pode fazer isso agora ou mais tarde pelo WhatsApp 💬
           </div>
           <DialogFooter className="flex-col gap-2">
@@ -306,14 +304,14 @@ const AppointmentScheduler: React.FC<AppointmentSchedulerProps> = ({ client, onS
               onClick={handleFillAnamnesisNow}
               className="w-full bg-bronze-500 hover:bg-bronze-600"
             >
-              Sim, preencher agora
+              📋 Sim, preencher agora
             </Button>
             <Button 
               variant="outline" 
               onClick={handleFillAnamnesisLater}
               className="w-full"
             >
-              Não, mais tarde
+              ⏰ Depois
             </Button>
             {selectedDate && selectedTimeSlot && clientName && (
               <Button 
@@ -322,7 +320,7 @@ const AppointmentScheduler: React.FC<AppointmentSchedulerProps> = ({ client, onS
                 className="w-full text-green-600 border-green-300 hover:bg-green-50 flex items-center gap-2"
               >
                 <MessageCircle className="h-4 w-4" />
-                Completar pelo WhatsApp
+                💬 Completar pelo WhatsApp
               </Button>
             )}
           </DialogFooter>
