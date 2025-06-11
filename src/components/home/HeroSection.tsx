@@ -27,10 +27,7 @@ const HeroSection = () => {
               
             </Button>
             <Button size="lg" variant="outline" asChild>
-              <Link to="/bronze-simulator">
-                <Camera className="mr-2 h-5 w-5" />
-                Simular Bronze
-              </Link>
+              
             </Button>
           </div>
         </div>
