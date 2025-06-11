@@ -9,6 +9,7 @@ import { Separator } from "@/components/ui/separator";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AnamnesisQuestion, AnamnesisResponse } from "@/types";
 import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 import { useAnamnesisValidation } from "@/hooks/useAnamnesisValidation";
 import DigitalSignature from "./DigitalSignature";
 import AnamnesisReportGenerator from "./AnamnesisReportGenerator";
@@ -20,22 +21,16 @@ interface AnamnesisFormProps {
 }
 
 const AnamnesisForm: React.FC<AnamnesisFormProps> = ({ clientId, onComplete }) => {
+  const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(0);
   const [responses, setResponses] = useState<AnamnesisResponse[]>([]);
+  const [clientName, setClientName] = useState<string>("");
   const [signature, setSignature] = useState<string>("");
   const [warnings, setWarnings] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showReport, setShowReport] = useState(false);
 
   const { markAnamnesisCompleted } = useAnamnesisValidation(clientId);
-
-  // Mock client data - in real app this would come from props or API
-  const clientData = {
-    name: "Cliente Exemplo",
-    email: "cliente@exemplo.com",
-    phone: "(62) 99999-9999",
-    birthdate: "1990-01-01"
-  };
 
   // Example predefined questions
   const questions: AnamnesisQuestion[] = [
@@ -146,6 +141,16 @@ const AnamnesisForm: React.FC<AnamnesisFormProps> = ({ clientId, onComplete }) =
   };
 
   const handleNext = () => {
+    // Validate client name first if on step 0
+    if (currentStep === -1) {
+      if (!clientName.trim()) {
+        toast.error("O nome completo é obrigatório!");
+        return;
+      }
+      setCurrentStep(0);
+      return;
+    }
+    
     const currentQuestion = questions[currentStep];
     const currentResponse = getResponseForQuestion(currentQuestion.id);
     
@@ -165,7 +170,9 @@ const AnamnesisForm: React.FC<AnamnesisFormProps> = ({ clientId, onComplete }) =
   };
 
   const handlePrevious = () => {
-    if (currentStep > 0) {
+    if (currentStep === 0) {
+      setCurrentStep(-1); // Go back to name step
+    } else if (currentStep > 0) {
       setCurrentStep(currentStep - 1);
     }
   };
@@ -174,9 +181,28 @@ const AnamnesisForm: React.FC<AnamnesisFormProps> = ({ clientId, onComplete }) =
     setSignature(signatureData);
   };
 
+  const isFormComplete = () => {
+    // Check if name is filled
+    if (!clientName.trim()) return false;
+    
+    // Check if all required questions are answered
+    const requiredQuestions = questions.filter(q => q.required);
+    for (const question of requiredQuestions) {
+      const response = getResponseForQuestion(question.id);
+      if (response === undefined || 
+          (Array.isArray(response) && response.length === 0) ||
+          response === "") {
+        return false;
+      }
+    }
+    
+    // Check if signature is provided
+    return !!signature;
+  };
+
   const handleSubmit = async () => {
-    if (!signature) {
-      toast.error("A assinatura digital é obrigatória");
+    if (!isFormComplete()) {
+      toast.error("Por favor, preencha todos os campos obrigatórios e forneça sua assinatura");
       return;
     }
     
@@ -189,8 +215,20 @@ const AnamnesisForm: React.FC<AnamnesisFormProps> = ({ clientId, onComplete }) =
       // Mark anamnesis as completed for this client
       markAnamnesisCompleted(clientId);
       
-      toast.success("Anamnese salva com sucesso!");
-      setShowReport(true);
+      toast.success("Anamnese concluída com sucesso!");
+      
+      // Store client name for future use
+      localStorage.setItem(`client_name_${clientId}`, clientName);
+      
+      // Redirect to appointment scheduling
+      setTimeout(() => {
+        navigate("/appointments", { 
+          state: { 
+            clientName,
+            anamnesisCompleted: true 
+          }
+        });
+      }, 1500);
       
       if (onComplete) {
         onComplete("anamnesis-mock-id");
@@ -282,7 +320,7 @@ const AnamnesisForm: React.FC<AnamnesisFormProps> = ({ clientId, onComplete }) =
     return (
       <AnamnesisReportGenerator
         responses={responses}
-        clientData={clientData}
+        clientData={{ name: clientName, email: "", phone: "", birthdate: "" }}
         signature={signature}
         onSave={() => toast.success("Ficha salva no sistema!")}
       />
@@ -295,15 +333,15 @@ const AnamnesisForm: React.FC<AnamnesisFormProps> = ({ clientId, onComplete }) =
       
       <Card className="w-full">
         <CardHeader>
-          <CardTitle>Anamnese Digital</CardTitle>
+          <CardTitle>Ficha de Anamnese - Obrigatória</CardTitle>
           <CardDescription>
-            Preencha o formulário de saúde para avaliarmos as condições para o bronzeamento
+            Preencha completamente este formulário de saúde para prosseguir com o agendamento
           </CardDescription>
           <div className="w-full bg-gray-200 h-2 mt-4 rounded-full overflow-hidden">
             <div 
               className="h-full bg-bronze-500 transition-all duration-300" 
               style={{ 
-                width: `${((currentStep >= questions.length ? questions.length : currentStep) / questions.length) * 100}%` 
+                width: `${((currentStep >= questions.length ? questions.length + 1 : currentStep + 1) / (questions.length + 2)) * 100}%` 
               }}
             ></div>
           </div>
@@ -322,16 +360,31 @@ const AnamnesisForm: React.FC<AnamnesisFormProps> = ({ clientId, onComplete }) =
             </Alert>
           )}
 
-          {currentStep < questions.length ? (
+          {currentStep === -1 ? (
+            <div className="space-y-4 animate-fade-in">
+              <h3 className="text-lg font-medium">Nome Completo *</h3>
+              <Input
+                value={clientName}
+                onChange={(e) => setClientName(e.target.value)}
+                placeholder="Digite seu nome completo"
+                className="w-full"
+                required
+              />
+              <p className="text-sm text-gray-500">
+                * Campo obrigatório para prosseguir com a anamnese
+              </p>
+            </div>
+          ) : currentStep < questions.length ? (
             <div className="space-y-4 animate-fade-in">
               <h3 className="text-lg font-medium">
                 {questions[currentStep].question}
+                {questions[currentStep].required && <span className="text-red-500 ml-1">*</span>}
               </h3>
               {renderQuestionInput(questions[currentStep])}
             </div>
           ) : (
             <div className="space-y-6 animate-fade-in">
-              <h3 className="text-lg font-medium">Assinatura Digital</h3>
+              <h3 className="text-lg font-medium">Assinatura Digital *</h3>
               <p className="text-sm text-gray-500">
                 Ao assinar abaixo, você confirma que todas as informações fornecidas são verdadeiras e que está ciente dos riscos e contraindicações para o procedimento de bronzeamento.
               </p>
@@ -353,7 +406,7 @@ const AnamnesisForm: React.FC<AnamnesisFormProps> = ({ clientId, onComplete }) =
           <Button
             variant="outline"
             onClick={handlePrevious}
-            disabled={currentStep === 0}
+            disabled={currentStep === -1}
           >
             Voltar
           </Button>
@@ -362,16 +415,17 @@ const AnamnesisForm: React.FC<AnamnesisFormProps> = ({ clientId, onComplete }) =
             <Button 
               onClick={handleNext}
               className="bg-bronze-500 hover:bg-bronze-600"
+              disabled={currentStep === -1 && !clientName.trim()}
             >
-              Próxima
+              {currentStep === -1 ? "Iniciar Anamnese" : "Próxima"}
             </Button>
           ) : (
             <Button 
               onClick={handleSubmit}
               className="bg-bronze-500 hover:bg-bronze-600"
-              disabled={isSubmitting || !signature}
+              disabled={isSubmitting || !isFormComplete()}
             >
-              {isSubmitting ? "Gerando Ficha..." : "Gerar Ficha de Anamnese"}
+              {isSubmitting ? "Finalizando..." : "Concluir e Ir para Agendamento"}
             </Button>
           )}
         </CardFooter>

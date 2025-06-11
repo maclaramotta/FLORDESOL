@@ -1,5 +1,5 @@
-
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -9,7 +9,21 @@ import { Link } from "react-router-dom";
 import AppointmentScheduler from "@/components/appointments/AppointmentScheduler";
 
 const Scheduling = () => {
+  const location = useLocation();
   const [activeTab, setActiveTab] = useState("new");
+  const [clientName, setClientName] = useState<string>("");
+
+  useEffect(() => {
+    // Get client name from navigation state or localStorage
+    const nameFromState = location.state?.clientName;
+    const nameFromStorage = localStorage.getItem("client_name_mock-client-id");
+    
+    if (nameFromState) {
+      setClientName(nameFromState);
+    } else if (nameFromStorage) {
+      setClientName(nameFromStorage);
+    }
+  }, [location.state]);
 
   // Mock upcoming appointments data
   const upcomingAppointments = [
@@ -88,13 +102,23 @@ const Scheduling = () => {
         <div className="mb-10">
           <h1 className="text-4xl font-bold mb-6 tracking-tight text-center">
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-bronze-600 to-bronze-800">
-              Meus Agendamentos
+              {clientName ? `Olá, ${clientName}!` : "Meus Agendamentos"}
             </span>
           </h1>
           <p className="text-xl text-gray-700 mb-8 text-center max-w-2xl mx-auto">
-            Gerencie seus agendamentos de bronzeamento e mantenha-se sempre em dia 
-            com seus horários marcados.
+            {clientName 
+              ? "Agora você pode agendar seu bronzeamento com segurança!"
+              : "Gerencie seus agendamentos de bronzeamento e mantenha-se sempre em dia com seus horários marcados."
+            }
           </p>
+          
+          {location.state?.anamnesisCompleted && (
+            <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg text-center">
+              <p className="text-green-800 font-medium">
+                ✅ Anamnese concluída com sucesso! Agora você pode agendar seu bronzeamento.
+              </p>
+            </div>
+          )}
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
