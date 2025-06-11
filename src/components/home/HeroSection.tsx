@@ -1,24 +1,12 @@
-
 import React from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { 
-  Calendar, 
-  User, 
-  Heart, 
-  MessageSquare, 
-  Sun,
-  MapPin,
-  Camera
-} from "lucide-react";
+import { Calendar, User, Heart, MessageSquare, Sun, MapPin, Camera } from "lucide-react";
 import MainNavigation from "./MainNavigation";
-
 const HeroSection = () => {
   const whatsappNumber = "5564996170209";
   const address = "Rua João Rodrigues Jota, 251, Santos Dumont, Itumbiara GO";
-
-  return (
-    <section className="relative overflow-hidden">
+  return <section className="relative overflow-hidden">
       <div className="absolute inset-0 z-0 shine-gradient animate-shine"></div>
       <div className="container mx-auto px-4 py-20 md:py-28 relative z-10">
         <div className="max-w-5xl mx-auto text-center mb-12">
@@ -36,10 +24,7 @@ const HeroSection = () => {
 
           <div className="flex flex-col sm:flex-row justify-center gap-4 mt-10">
             <Button size="lg" className="bg-bronze-500 hover:bg-bronze-600" asChild>
-              <Link to="/appointments">
-                <Calendar className="mr-2 h-5 w-5" /> 
-                Agendar Agora ☀️
-              </Link>
+              
             </Button>
             <Button size="lg" variant="outline" asChild>
               <Link to="/bronze-simulator">
@@ -51,10 +36,7 @@ const HeroSection = () => {
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 max-w-5xl mx-auto mt-12">
-          <Link 
-            to="/appointments"
-            className="flex flex-col items-center p-6 bg-gradient-to-br from-amber-50 to-orange-50 backdrop-blur-sm rounded-xl shadow-md hover:shadow-lg transition-all hover:scale-105 border border-amber-200"
-          >
+          <Link to="/appointments" className="flex flex-col items-center p-6 bg-gradient-to-br from-amber-50 to-orange-50 backdrop-blur-sm rounded-xl shadow-md hover:shadow-lg transition-all hover:scale-105 border border-amber-200">
             <div className="bg-amber-100 text-amber-600 p-4 rounded-full mb-3">
               <Sun className="h-7 w-7" />
             </div>
@@ -62,10 +44,7 @@ const HeroSection = () => {
             <span className="text-sm text-amber-600 text-center mt-1">Sessões disponíveis</span>
           </Link>
 
-          <Link 
-            to="/bronze-simulator"
-            className="flex flex-col items-center p-6 bg-gradient-to-br from-purple-50 to-pink-50 backdrop-blur-sm rounded-xl shadow-md hover:shadow-lg transition-all hover:scale-105 border border-purple-200"
-          >
+          <Link to="/bronze-simulator" className="flex flex-col items-center p-6 bg-gradient-to-br from-purple-50 to-pink-50 backdrop-blur-sm rounded-xl shadow-md hover:shadow-lg transition-all hover:scale-105 border border-purple-200">
             <div className="bg-purple-100 text-purple-600 p-4 rounded-full mb-3">
               <Camera className="h-7 w-7" />
             </div>
@@ -73,10 +52,7 @@ const HeroSection = () => {
             <span className="text-sm text-purple-600 text-center mt-1">Veja como ficará</span>
           </Link>
 
-          <button
-            onClick={() => window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`, '_blank')}
-            className="flex flex-col items-center p-6 bg-gradient-to-br from-green-50 to-emerald-50 backdrop-blur-sm rounded-xl shadow-md hover:shadow-lg transition-all hover:scale-105 border border-green-200"
-          >
+          <button onClick={() => window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`, '_blank')} className="flex flex-col items-center p-6 bg-gradient-to-br from-green-50 to-emerald-50 backdrop-blur-sm rounded-xl shadow-md hover:shadow-lg transition-all hover:scale-105 border border-green-200">
             <div className="bg-green-100 text-green-600 p-4 rounded-full mb-3">
               <MapPin className="h-7 w-7" />
             </div>
@@ -84,10 +60,7 @@ const HeroSection = () => {
             <span className="text-sm text-green-600 text-center mt-1">Localização no mapa</span>
           </button>
 
-          <button
-            onClick={() => window.open(`https://wa.me/${whatsappNumber}?text=Olá! Preciso de ajuda.`, '_blank')}
-            className="flex flex-col items-center p-6 bg-gradient-to-br from-emerald-50 to-teal-50 backdrop-blur-sm rounded-xl shadow-md hover:shadow-lg transition-all hover:scale-105 border border-emerald-200"
-          >
+          <button onClick={() => window.open(`https://wa.me/${whatsappNumber}?text=Olá! Preciso de ajuda.`, '_blank')} className="flex flex-col items-center p-6 bg-gradient-to-br from-emerald-50 to-teal-50 backdrop-blur-sm rounded-xl shadow-md hover:shadow-lg transition-all hover:scale-105 border border-emerald-200">
             <div className="bg-emerald-100 text-emerald-600 p-4 rounded-full mb-3">
               <MessageSquare className="h-7 w-7" />
             </div>
@@ -119,8 +92,6 @@ const HeroSection = () => {
           </div>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default HeroSection;
