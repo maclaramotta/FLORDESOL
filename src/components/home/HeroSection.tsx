@@ -41,7 +41,10 @@ const HeroSection = () => {
               </Link>
             </Button>
             <Button size="lg" variant="outline" asChild>
-              <Link to="/login">Fazer Login</Link>
+              <Link to="/bronze-simulator">
+                <Camera className="mr-2 h-5 w-5" />
+                Simular Bronze
+              </Link>
             </Button>
           </div>
         </div>
@@ -59,14 +62,14 @@ const HeroSection = () => {
           </Link>
 
           <Link 
-            to="/appointments"
-            className="flex flex-col items-center p-6 bg-gradient-to-br from-blue-50 to-indigo-50 backdrop-blur-sm rounded-xl shadow-md hover:shadow-lg transition-all hover:scale-105 border border-blue-200"
+            to="/bronze-simulator"
+            className="flex flex-col items-center p-6 bg-gradient-to-br from-purple-50 to-pink-50 backdrop-blur-sm rounded-xl shadow-md hover:shadow-lg transition-all hover:scale-105 border border-purple-200"
           >
-            <div className="bg-blue-100 text-blue-600 p-4 rounded-full mb-3">
-              <Calendar className="h-7 w-7" />
+            <div className="bg-purple-100 text-purple-600 p-4 rounded-full mb-3">
+              <Camera className="h-7 w-7" />
             </div>
-            <span className="text-base font-semibold text-blue-800 text-center">Meus Agendamentos</span>
-            <span className="text-sm text-blue-600 text-center mt-1">Ver seus horários</span>
+            <span className="text-base font-semibold text-purple-800 text-center">Simular Bronze ✨</span>
+            <span className="text-sm text-purple-600 text-center mt-1">Veja como ficará</span>
           </Link>
 
           <button

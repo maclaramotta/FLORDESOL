@@ -9,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { SkinType, Client } from "@/types";
 import SkinTypeTest from "./SkinTypeTest";
-import { format } from "date-fns";
+import { Camera } from "lucide-react";
 
 interface ClientProfileProps {
   client?: Client;
@@ -23,11 +23,19 @@ const ClientProfile: React.FC<ClientProfileProps> = ({ client }) => {
   const [skinType, setSkinType] = useState<SkinType | undefined>(client?.skinType);
   const [notes, setNotes] = useState(client?.notes || "");
   const [profileImage, setProfileImage] = useState<File | null>(null);
+  const [profileImagePreview, setProfileImagePreview] = useState<string | null>(client?.profileImageUrl || null);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleProfileImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      setProfileImage(e.target.files[0]);
+      const file = e.target.files[0];
+      setProfileImage(file);
+      
+      // Create preview URL
+      const previewUrl = URL.createObjectURL(file);
+      setProfileImagePreview(previewUrl);
+      
+      toast.success("Foto selecionada com sucesso!");
     }
   };
 
@@ -37,6 +45,24 @@ const ClientProfile: React.FC<ClientProfileProps> = ({ client }) => {
 
     try {
       // Mock API call - replace with actual API
+      const clientData = {
+        nome: name,
+        telefone: phone,
+        email: email,
+        birthdate: birthdate,
+        skinType: skinType,
+        notes: notes,
+        foto_perfil: profileImage
+      };
+      
+      // Save to localStorage for demo purposes
+      localStorage.setItem('cliente_atual', JSON.stringify({
+        nome: name,
+        telefone: phone,
+        email: email,
+        foto_perfil: profileImagePreview
+      }));
+      
       await new Promise(resolve => setTimeout(resolve, 1000));
       toast.success(client ? "Perfil atualizado com sucesso!" : "Cliente cadastrado com sucesso!");
     } catch (error) {
@@ -55,43 +81,40 @@ const ClientProfile: React.FC<ClientProfileProps> = ({ client }) => {
     <div className="w-full max-w-4xl mx-auto pb-12">
       <Tabs defaultValue="profile" className="w-full">
         <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="profile">Informações Pessoais</TabsTrigger>
+          <TabsTrigger value="profile">Perfil da Cliente</TabsTrigger>
           <TabsTrigger value="skin-test">Teste de Tipo de Pele</TabsTrigger>
         </TabsList>
         <TabsContent value="profile" className="mt-6">
           <Card>
             <CardHeader>
-              <CardTitle>Perfil do Cliente</CardTitle>
+              <CardTitle>Perfil da Cliente</CardTitle>
               <CardDescription>
-                Preencha os dados pessoais do cliente para criar ou atualizar o perfil.
+                Preencha seus dados pessoais e adicione uma foto de perfil.
               </CardDescription>
             </CardHeader>
             <form onSubmit={handleSubmit}>
               <CardContent className="space-y-6">
                 <div className="flex flex-col md:flex-row gap-6">
                   <div className="flex flex-col items-center space-y-4">
-                    <div className="w-32 h-32 rounded-full overflow-hidden border-2 border-bronze-200">
-                      {profileImage ? (
+                    <div className="w-32 h-32 rounded-full overflow-hidden border-2 border-bronze-200 bg-bronze-50 flex items-center justify-center">
+                      {profileImagePreview ? (
                         <img 
-                          src={URL.createObjectURL(profileImage)} 
-                          alt="Preview" 
-                          className="w-full h-full object-cover" 
-                        />
-                      ) : client?.profileImageUrl ? (
-                        <img 
-                          src={client.profileImageUrl} 
-                          alt={client.name} 
+                          src={profileImagePreview} 
+                          alt="Foto de perfil" 
                           className="w-full h-full object-cover" 
                         />
                       ) : (
-                        <div className="w-full h-full bg-bronze-100 flex items-center justify-center text-bronze-500">
-                          <span className="text-4xl">👤</span>
+                        <div className="flex flex-col items-center text-bronze-400">
+                          <Camera className="h-8 w-8 mb-2" />
+                          <span className="text-xs text-center">Adicione sua foto</span>
                         </div>
                       )}
                     </div>
                     <div>
-                      <Label htmlFor="profile-image" className="cursor-pointer text-sm text-bronze-500 hover:text-bronze-600">
-                        Alterar foto
+                      <Label htmlFor="profile-image" className="cursor-pointer">
+                        <div className="px-4 py-2 bg-bronze-500 text-white rounded-md hover:bg-bronze-600 transition-colors text-sm text-center">
+                          {profileImagePreview ? "Alterar foto" : "Adicionar foto"}
+                        </div>
                       </Label>
                       <Input
                         id="profile-image"
@@ -115,17 +138,6 @@ const ClientProfile: React.FC<ClientProfileProps> = ({ client }) => {
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <Label htmlFor="email">E-mail</Label>
-                        <Input
-                          id="email"
-                          type="email"
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
-                          placeholder="email@exemplo.com"
-                          required
-                        />
-                      </div>
-                      <div>
                         <Label htmlFor="phone">Telefone</Label>
                         <Input
                           id="phone"
@@ -133,6 +145,16 @@ const ClientProfile: React.FC<ClientProfileProps> = ({ client }) => {
                           onChange={(e) => setPhone(e.target.value)}
                           placeholder="(00) 00000-0000"
                           required
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="email">E-mail</Label>
+                        <Input
+                          id="email"
+                          type="email"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          placeholder="email@exemplo.com"
                         />
                       </div>
                     </div>
@@ -144,7 +166,6 @@ const ClientProfile: React.FC<ClientProfileProps> = ({ client }) => {
                           type="date"
                           value={birthdate}
                           onChange={(e) => setBirthdate(e.target.value)}
-                          required
                         />
                       </div>
                       <div>
@@ -180,7 +201,7 @@ const ClientProfile: React.FC<ClientProfileProps> = ({ client }) => {
                     id="notes"
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
-                    placeholder="Observações importantes sobre o cliente..."
+                    placeholder="Observações importantes..."
                     className="w-full min-h-[100px] p-2 border rounded-md"
                   />
                 </div>
@@ -191,7 +212,7 @@ const ClientProfile: React.FC<ClientProfileProps> = ({ client }) => {
                   className="bg-bronze-500 hover:bg-bronze-600 ml-auto"
                   disabled={isLoading}
                 >
-                  {isLoading ? "Salvando..." : "Salvar perfil"}
+                  {isLoading ? "Salvando..." : "Salvar Perfil"}
                 </Button>
               </CardFooter>
             </form>
