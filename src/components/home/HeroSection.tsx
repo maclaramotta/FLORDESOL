@@ -3,13 +3,10 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Calendar, User, Heart, MessageSquare, Sun, MapPin, Camera } from "lucide-react";
 import MainNavigation from "./MainNavigation";
-
 const HeroSection = () => {
   const whatsappNumber = "5564996170209";
   const address = "Rua João Rodrigues Jota, 251, Santos Dumont, Itumbiara GO";
-  
-  return (
-    <section className="relative overflow-hidden">
+  return <section className="relative overflow-hidden">
       <div className="absolute inset-0 z-0 shine-gradient animate-shine"></div>
       <div className="container mx-auto px-4 py-20 md:py-28 relative z-10">
         <div className="max-w-5xl mx-auto text-center mb-12">
@@ -27,10 +24,10 @@ const HeroSection = () => {
 
           <div className="flex flex-col sm:flex-row justify-center gap-4 mt-10">
             <Button size="lg" className="bg-bronze-500 hover:bg-bronze-600" asChild>
-              <Link to="/appointments">Agendar Sessão</Link>
+              
             </Button>
             <Button size="lg" variant="outline" asChild>
-              <Link to="/bronze-simulator">Simular Bronze</Link>
+              
             </Button>
           </div>
         </div>
@@ -92,8 +89,6 @@ const HeroSection = () => {
           </div>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default HeroSection;
