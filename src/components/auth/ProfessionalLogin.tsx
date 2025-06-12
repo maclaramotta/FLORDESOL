@@ -19,8 +19,8 @@ const ProfessionalLogin: React.FC<ProfessionalLoginProps> = ({ onLoginSuccess })
 
   // Updated credentials as requested
   const VALID_CREDENTIALS = {
-    email: "admin@flordesol.com",
-    password: "admin123"
+    email: "glenda15ramalho@gmail.com",
+    password: "flordesol123"
   };
 
   const mostrarAlerta = (mensagem: string, tipo: "sucesso" | "erro") => {
@@ -52,7 +52,7 @@ const ProfessionalLogin: React.FC<ProfessionalLoginProps> = ({ onLoginSuccess })
       mostrarAlerta("Acesso autorizado com sucesso!", "sucesso");
       onLoginSuccess();
     } else {
-      mostrarAlerta("Acesso restrito. E-mail ou senha incorretos.", "erro");
+      mostrarAlerta("E-mail ou senha incorretos. Tente novamente.", "erro");
     }
 
     setIsLoading(false);
@@ -134,7 +134,7 @@ const ProfessionalLogin: React.FC<ProfessionalLoginProps> = ({ onLoginSuccess })
 
             <div className="mt-6 text-center">
               <p className="text-xs text-gray-500">
-                Demo: admin@flordesol.com / admin123
+                Demo: glenda15ramalho@gmail.com / flordesol123
               </p>
             </div>
           </CardContent>
