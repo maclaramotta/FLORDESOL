@@ -7,27 +7,27 @@ import ProfessionalPanel from "@/components/professional/ProfessionalPanel";
 
 const ProfessionalArea: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [username, setUsername] = useState("");
+  const [userEmail, setUserEmail] = useState("");
 
   useEffect(() => {
     // Check if professional is already logged in
     const loggedIn = localStorage.getItem("professional_logged_in") === "true";
-    const storedUsername = localStorage.getItem("professional_username") || "";
+    const storedEmail = localStorage.getItem("professional_email") || "";
     
     setIsLoggedIn(loggedIn);
-    setUsername(storedUsername);
+    setUserEmail(storedEmail);
   }, []);
 
   const handleLoginSuccess = () => {
     setIsLoggedIn(true);
-    setUsername(localStorage.getItem("professional_username") || "");
+    setUserEmail(localStorage.getItem("professional_email") || "");
   };
 
   const handleLogout = () => {
     localStorage.removeItem("professional_logged_in");
-    localStorage.removeItem("professional_username");
+    localStorage.removeItem("professional_email");
     setIsLoggedIn(false);
-    setUsername("");
+    setUserEmail("");
   };
 
   if (!isLoggedIn) {
@@ -42,7 +42,7 @@ const ProfessionalArea: React.FC = () => {
             Painel Profissional
           </h1>
           <p className="text-gray-600 mt-2">
-            Bem-vindo, {username}! Gerencie seus agendamentos aqui.
+            Bem-vindo! Gerencie todos os agendamentos aqui.
           </p>
         </div>
         

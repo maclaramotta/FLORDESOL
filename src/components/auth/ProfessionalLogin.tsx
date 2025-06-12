@@ -12,22 +12,30 @@ interface ProfessionalLoginProps {
 }
 
 const ProfessionalLogin: React.FC<ProfessionalLoginProps> = ({ onLoginSuccess }) => {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Hardcoded credentials for demo - in production this should be handled by backend
+  // Updated credentials as requested
   const VALID_CREDENTIALS = {
-    username: "admin",
-    password: "1234"
+    email: "admin@flordesol.com",
+    password: "admin123"
+  };
+
+  const mostrarAlerta = (mensagem: string, tipo: "sucesso" | "erro") => {
+    if (tipo === "sucesso") {
+      toast.success(mensagem);
+    } else {
+      toast.error(mensagem);
+    }
   };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!username || !password) {
-      toast.error("Por favor, preencha todos os campos");
+    if (!email || !password) {
+      mostrarAlerta("Por favor, preencha todos os campos", "erro");
       return;
     }
 
@@ -36,15 +44,15 @@ const ProfessionalLogin: React.FC<ProfessionalLoginProps> = ({ onLoginSuccess })
     // Simulate API call delay
     await new Promise(resolve => setTimeout(resolve, 1000));
 
-    if (username === VALID_CREDENTIALS.username && password === VALID_CREDENTIALS.password) {
+    if (email === VALID_CREDENTIALS.email && password === VALID_CREDENTIALS.password) {
       // Store login state in localStorage for demo purposes
       localStorage.setItem("professional_logged_in", "true");
-      localStorage.setItem("professional_username", username);
+      localStorage.setItem("professional_email", email);
       
-      toast.success("Login realizado com sucesso!");
+      mostrarAlerta("Acesso autorizado com sucesso!", "sucesso");
       onLoginSuccess();
     } else {
-      toast.error("Acesso negado. Verifique os dados.");
+      mostrarAlerta("Acesso restrito. E-mail ou senha incorretos.", "erro");
     }
 
     setIsLoading(false);
@@ -58,10 +66,10 @@ const ProfessionalLogin: React.FC<ProfessionalLoginProps> = ({ onLoginSuccess })
             <Lock className="h-6 w-6 text-bronze-600" />
           </div>
           <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
-            Acesso do Profissional
+            Área do Profissional
           </h2>
           <p className="mt-2 text-sm text-gray-600">
-            Área exclusiva para visualizar todos os agendamentos
+            Acesso restrito para profissionais autorizados
           </p>
         </div>
 
@@ -69,22 +77,22 @@ const ProfessionalLogin: React.FC<ProfessionalLoginProps> = ({ onLoginSuccess })
           <CardHeader>
             <CardTitle>Entrar no Sistema</CardTitle>
             <CardDescription>
-              Use suas credenciais para acessar o painel
+              Use seu e-mail e senha de acesso
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleLogin} className="space-y-6">
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="username">Usuário</Label>
+                  <Label htmlFor="email">E-mail</Label>
                   <div className="relative">
                     <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                     <Input
-                      id="username"
-                      type="text"
-                      value={username}
-                      onChange={(e) => setUsername(e.target.value)}
-                      placeholder="Digite seu usuário"
+                      id="email"
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="Digite seu e-mail"
                       className="pl-10"
                       required
                     />
@@ -120,13 +128,13 @@ const ProfessionalLogin: React.FC<ProfessionalLoginProps> = ({ onLoginSuccess })
                 className="w-full bg-bronze-500 hover:bg-bronze-600"
                 disabled={isLoading}
               >
-                {isLoading ? "Entrando..." : "Entrar"}
+                {isLoading ? "Verificando acesso..." : "Entrar"}
               </Button>
             </form>
 
             <div className="mt-6 text-center">
               <p className="text-xs text-gray-500">
-                Demo: usuário "admin" e senha "1234"
+                Demo: admin@flordesol.com / admin123
               </p>
             </div>
           </CardContent>

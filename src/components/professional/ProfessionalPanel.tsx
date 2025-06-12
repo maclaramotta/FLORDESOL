@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Calendar, Clock, Phone, Edit, Check, X, Users, CalendarCheck, AlertCircle } from "lucide-react";
+import { Calendar, Clock, Phone, Edit, Check, X, Users, CalendarCheck, AlertCircle, MessageSquare } from "lucide-react";
 import { toast } from "sonner";
 
 interface Appointment {
@@ -15,12 +15,12 @@ interface Appointment {
   date: string;
   time: string;
   phone: string;
-  status: "Pendente" | "Confirmado" | "Cancelado";
+  status: "pendente" | "confirmado" | "cancelado";
   service?: string;
 }
 
 const ProfessionalPanel: React.FC = () => {
-  // Mock data - in production this would come from a database
+  // Mock data - filtered and sorted as requested
   const [appointments, setAppointments] = useState<Appointment[]>([
     {
       id: "1",
@@ -28,7 +28,7 @@ const ProfessionalPanel: React.FC = () => {
       date: "2025-06-13",
       time: "14:30",
       phone: "64999887766",
-      status: "Pendente",
+      status: "pendente",
       service: "Bronzeamento Spray"
     },
     {
@@ -37,7 +37,7 @@ const ProfessionalPanel: React.FC = () => {
       date: "2025-06-13",
       time: "15:00",
       phone: "64988776655",
-      status: "Confirmado",
+      status: "confirmado",
       service: "Bronzeamento Natural"
     },
     {
@@ -46,7 +46,7 @@ const ProfessionalPanel: React.FC = () => {
       date: "2025-06-14",
       time: "09:30",
       phone: "64977665544",
-      status: "Pendente",
+      status: "pendente",
       service: "Bronzeamento em Cabine"
     },
     {
@@ -55,10 +55,11 @@ const ProfessionalPanel: React.FC = () => {
       date: "2025-06-15",
       time: "16:00",
       phone: "64966554433",
-      status: "Confirmado",
+      status: "confirmado",
       service: "Bronzeamento Spray"
     }
-  ]);
+  ].filter(agendamento => agendamento.status !== "cancelado")
+   .sort((a, b) => new Date(a.date + ' ' + a.time).getTime() - new Date(b.date + ' ' + b.time).getTime()));
 
   const [editingAppointment, setEditingAppointment] = useState<Appointment | null>(null);
   const [showEditDialog, setShowEditDialog] = useState(false);
@@ -75,8 +76,8 @@ const ProfessionalPanel: React.FC = () => {
     return aptDate >= currentWeek.start && aptDate <= currentWeek.end;
   });
 
-  const confirmedCount = weekAppointments.filter(apt => apt.status === "Confirmado").length;
-  const pendingCount = weekAppointments.filter(apt => apt.status === "Pendente").length;
+  const confirmedCount = weekAppointments.filter(apt => apt.status === "confirmado").length;
+  const pendingCount = weekAppointments.filter(apt => apt.status === "pendente").length;
   const totalWeekCount = weekAppointments.length;
 
   function getCurrentWeekRange() {
@@ -89,6 +90,28 @@ const ProfessionalPanel: React.FC = () => {
     
     return { start: startOfWeek, end: endOfWeek };
   }
+
+  const mostrarAlerta = (mensagem: string, tipo: "sucesso" | "erro") => {
+    if (tipo === "sucesso") {
+      toast.success(mensagem);
+    } else {
+      toast.error(mensagem);
+    }
+  };
+
+  const atualizarStatus = (id: string, novoStatus: "confirmado" | "cancelado") => {
+    setAppointments(prev => prev.map(apt => 
+      apt.id === id 
+        ? { ...apt, status: novoStatus }
+        : apt
+    ));
+  };
+
+  const enviarWhatsApp = (telefone: string, mensagem: string) => {
+    // Simulate WhatsApp message sending
+    console.log(`Enviando WhatsApp para ${telefone}: ${mensagem}`);
+    toast.success(`Mensagem WhatsApp enviada para ${telefone}`);
+  };
 
   const handleEdit = (appointment: Appointment) => {
     setEditingAppointment(appointment);
@@ -109,25 +132,25 @@ const ProfessionalPanel: React.FC = () => {
         : apt
     ));
 
-    toast.success("Agendamento atualizado com sucesso!");
+    mostrarAlerta("Agendamento atualizado com sucesso!", "sucesso");
     setShowEditDialog(false);
     setEditingAppointment(null);
   };
 
-  const handleConfirm = (id: string) => {
-    setAppointments(prev => prev.map(apt => 
-      apt.id === id 
-        ? { ...apt, status: "Confirmado" as const }
-        : apt
-    ));
-    toast.success("Presença confirmada com sucesso!");
+  const handleConfirm = (agendamento: Appointment) => {
+    atualizarStatus(agendamento.id, "confirmado");
+    enviarWhatsApp(agendamento.phone, `Olá, seu agendamento no Flor de Sol foi confirmado para ${formatDate(agendamento.date)} às ${agendamento.time}.`);
+    mostrarAlerta("Agendamento confirmado com sucesso!", "sucesso");
   };
 
-  const handleCancel = (id: string) => {
+  const handleCancel = (agendamento: Appointment) => {
     const confirmed = window.confirm("Tem certeza que deseja cancelar este agendamento?");
     if (confirmed) {
-      setAppointments(prev => prev.filter(apt => apt.id !== id));
-      toast.success("Agendamento cancelado com sucesso!");
+      atualizarStatus(agendamento.id, "cancelado");
+      enviarWhatsApp(agendamento.phone, `Seu agendamento no Flor de Sol foi cancelado. Entre em contato para remarcar.`);
+      // Remove from list since we filter out canceled appointments
+      setAppointments(prev => prev.filter(apt => apt.id !== agendamento.id));
+      mostrarAlerta("Agendamento cancelado com sucesso!", "sucesso");
     }
   };
 
@@ -138,10 +161,19 @@ const ProfessionalPanel: React.FC = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "Confirmado": return "bg-green-100 text-green-800 border-green-300";
-      case "Pendente": return "bg-orange-100 text-orange-800 border-orange-300";
-      case "Cancelado": return "bg-red-100 text-red-800 border-red-300";
+      case "confirmado": return "bg-green-100 text-green-800 border-green-300";
+      case "pendente": return "bg-orange-100 text-orange-800 border-orange-300";
+      case "cancelado": return "bg-red-100 text-red-800 border-red-300";
       default: return "bg-gray-100 text-gray-800 border-gray-300";
+    }
+  };
+
+  const getStatusLabel = (status: string) => {
+    switch (status) {
+      case "confirmado": return "Confirmado";
+      case "pendente": return "Pendente";
+      case "cancelado": return "Cancelado";
+      default: return status;
     }
   };
 
@@ -195,15 +227,15 @@ const ProfessionalPanel: React.FC = () => {
       {/* Appointments List */}
       <Card>
         <CardHeader>
-          <CardTitle>Agenda de Clientes</CardTitle>
+          <CardTitle>Lista de Agendamentos</CardTitle>
           <CardDescription>
-            Gerencie todos os agendamentos
+            Filtrados por status ativo e ordenados por data
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {appointments.map((appointment) => (
-              <div key={appointment.id} className="bg-white border rounded-lg p-4 shadow-sm">
+            {appointments.map((agendamento) => (
+              <div key={agendamento.id} className="bg-white border rounded-lg p-4 shadow-sm">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                   <div className="flex-1">
                     <div className="flex items-center gap-4 mb-2">
@@ -211,47 +243,47 @@ const ProfessionalPanel: React.FC = () => {
                         <Users className="h-5 w-5 text-bronze-600" />
                       </div>
                       <div>
-                        <h3 className="font-semibold text-lg">{appointment.clientName}</h3>
-                        <p className="text-gray-600">{appointment.service}</p>
+                        <h3 className="font-semibold text-lg">{agendamento.clientName}</h3>
+                        <p className="text-gray-600">{agendamento.service}</p>
                       </div>
                     </div>
                     
                     <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600">
                       <div className="flex items-center gap-1">
                         <Calendar className="h-4 w-4" />
-                        <span>{formatDate(appointment.date)}</span>
+                        <span>{formatDate(agendamento.date)}</span>
                       </div>
                       <div className="flex items-center gap-1">
                         <Clock className="h-4 w-4" />
-                        <span>{appointment.time}</span>
+                        <span>{agendamento.time}</span>
                       </div>
                       <div className="flex items-center gap-1">
                         <Phone className="h-4 w-4" />
-                        <span>{appointment.phone}</span>
+                        <span>{agendamento.phone}</span>
                       </div>
                     </div>
                   </div>
 
                   <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
-                    <Badge className={getStatusColor(appointment.status)}>
-                      {appointment.status}
+                    <Badge className={getStatusColor(agendamento.status)}>
+                      {getStatusLabel(agendamento.status)}
                     </Badge>
                     
                     <div className="flex gap-2">
                       <Button
                         size="sm"
                         variant="outline"
-                        onClick={() => handleEdit(appointment)}
+                        onClick={() => handleEdit(agendamento)}
                         className="flex items-center gap-1"
                       >
                         <Edit className="h-4 w-4" />
                         Editar
                       </Button>
                       
-                      {appointment.status === "Pendente" && (
+                      {agendamento.status === "pendente" && (
                         <Button
                           size="sm"
-                          onClick={() => handleConfirm(appointment.id)}
+                          onClick={() => handleConfirm(agendamento)}
                           className="bg-green-600 hover:bg-green-700 text-white flex items-center gap-1"
                         >
                           <Check className="h-4 w-4" />
@@ -262,7 +294,7 @@ const ProfessionalPanel: React.FC = () => {
                       <Button
                         size="sm"
                         variant="outline"
-                        onClick={() => handleCancel(appointment.id)}
+                        onClick={() => handleCancel(agendamento)}
                         className="text-red-600 border-red-300 hover:bg-red-50 flex items-center gap-1"
                       >
                         <X className="h-4 w-4" />
