@@ -27,6 +27,7 @@ const AnamnesisForm: React.FC<AnamnesisFormProps> = ({ clientId, onComplete }) =
   const [clientName, setClientName] = useState<string>("");
   const [signature, setSignature] = useState<string>("");
   const [signatureStatus, setSignatureStatus] = useState<"válida" | "inválida" | "">("");
+  const [termosAceitos, setTermosAceitos] = useState<boolean>(false);
   const [warnings, setWarnings] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showReport, setShowReport] = useState(false);
@@ -34,14 +35,14 @@ const AnamnesisForm: React.FC<AnamnesisFormProps> = ({ clientId, onComplete }) =
 
   const { markAnamnesisCompleted } = useAnamnesisValidation(clientId);
 
-  // Update button enabled state based on your logic
+  // Update button enabled state based on required fields
   useEffect(() => {
-    if (clientName !== "" && signatureStatus === "válida") {
+    if (clientName.trim() !== "" && signature !== "" && signatureStatus === "válida" && termosAceitos === true) {
       setBotaoSalvarHabilitado(true);
     } else {
       setBotaoSalvarHabilitado(false);
     }
-  }, [clientName, signatureStatus]);
+  }, [clientName, signature, signatureStatus, termosAceitos]);
 
   // Updated questions - all optional now
   const questions: AnamnesisQuestion[] = [
@@ -193,7 +194,7 @@ const AnamnesisForm: React.FC<AnamnesisFormProps> = ({ clientId, onComplete }) =
     return clientName.trim() !== "";
   };
 
-  const salvarFichaAnamnese = async (data: { nome: string; assinatura: string; respostas: AnamnesisResponse[] }) => {
+  const salvarFichaAnamnese = async (data: { nome: string; assinatura: string; respostas: AnamnesisResponse[]; termosAceitos: boolean }) => {
     try {
       // Mock API call - replace with actual API
       await new Promise(resolve => setTimeout(resolve, 1000));
@@ -231,15 +232,17 @@ const AnamnesisForm: React.FC<AnamnesisFormProps> = ({ clientId, onComplete }) =
           nome: clientName,
           assinatura: signature,
           respostas: responses,
+          termosAceitos: termosAceitos,
         });
-        mostrarAlerta("Ficha salva com sucesso!", "sucesso");
+        mostrarAlerta("Ficha de anamnese salva com sucesso!", "sucesso");
+        navigate("/dashboard");
       } catch (error) {
         mostrarAlerta("Erro ao salvar ficha. Tente novamente.", "erro");
       } finally {
         setIsSubmitting(false);
       }
     } else {
-      mostrarAlerta("Preencha todos os campos obrigatórios antes de salvar.", "erro");
+      mostrarAlerta("Por favor, preencha todos os campos obrigatórios antes de salvar.", "erro");
     }
   };
 
@@ -336,9 +339,9 @@ const AnamnesisForm: React.FC<AnamnesisFormProps> = ({ clientId, onComplete }) =
       
       <Card className="w-full">
         <CardHeader>
-          <CardTitle>Ficha de Anamnese - Opcional</CardTitle>
+          <CardTitle>Ficha de Anamnese</CardTitle>
           <CardDescription>
-            Preencha as informações que desejar para um atendimento mais personalizado
+            Preencha as informações para um atendimento seguro e personalizado
           </CardDescription>
           <div className="w-full bg-gray-200 h-2 mt-4 rounded-full overflow-hidden">
             <div 
@@ -388,24 +391,34 @@ const AnamnesisForm: React.FC<AnamnesisFormProps> = ({ clientId, onComplete }) =
           ) : (
             <div className="space-y-6 animate-fade-in">
               <h3 className="text-lg font-medium">
-                Assinatura Digital <span className="text-sm text-gray-500">(opcional)</span>
+                Assinatura Digital *
               </h3>
-              <p className="text-sm text-gray-500">
-                Você pode assinar digitalmente para confirmar as informações, mas não é obrigatório.
-              </p>
               
               <DigitalSignature 
                 onSignatureChange={handleSignatureChange}
-                required={false}
+                required={true}
               />
               
               <Separator />
               
-              <div className="text-sm">
+              <div className="text-sm space-y-4">
                 <p className="font-medium mb-2">Termo de responsabilidade:</p>
-                <p className="text-gray-600">
-                  Declaro estar ciente de que o bronzeamento artificial expõe a pele à radiação ultravioleta, que pode causar envelhecimento precoce da pele, alterações na textura da pele, e, em alguns casos, aumentar o risco de câncer de pele.
+                <p className="text-gray-600 leading-relaxed">
+                  Declaro estar ciente de que o bronzeamento artificial expõe a pele à radiação ultravioleta, 
+                  que pode causar envelhecimento precoce da pele, alterações na textura da pele e, em alguns casos, 
+                  aumentar o risco de câncer de pele.
                 </p>
+                
+                <div className="flex items-center space-x-2 pt-4">
+                  <Checkbox 
+                    id="termos-aceitos"
+                    checked={termosAceitos}
+                    onCheckedChange={(checked) => setTermosAceitos(checked as boolean)}
+                  />
+                  <Label htmlFor="termos-aceitos" className="text-sm">
+                    Declaro que li e aceito o termo acima *
+                  </Label>
+                </div>
               </div>
             </div>
           )}
@@ -413,7 +426,13 @@ const AnamnesisForm: React.FC<AnamnesisFormProps> = ({ clientId, onComplete }) =
         <CardFooter className="flex justify-between">
           <Button
             variant="outline"
-            onClick={handlePrevious}
+            onClick={() => {
+              if (currentStep === 0) {
+                setCurrentStep(-1);
+              } else if (currentStep > 0) {
+                setCurrentStep(currentStep - 1);
+              }
+            }}
             disabled={currentStep === -1}
           >
             Voltar
@@ -421,7 +440,22 @@ const AnamnesisForm: React.FC<AnamnesisFormProps> = ({ clientId, onComplete }) =
           
           {currentStep < questions.length ? (
             <Button 
-              onClick={handleNext}
+              onClick={() => {
+                if (currentStep === -1) {
+                  if (!clientName.trim()) {
+                    toast.error("O nome completo é obrigatório!");
+                    return;
+                  }
+                  setCurrentStep(0);
+                  return;
+                }
+                
+                if (currentStep < questions.length - 1) {
+                  setCurrentStep(currentStep + 1);
+                } else {
+                  setCurrentStep(questions.length);
+                }
+              }}
               className="bg-bronze-500 hover:bg-bronze-600"
               disabled={currentStep === -1 && !clientName.trim()}
             >
