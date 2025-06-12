@@ -107,7 +107,7 @@ const Scheduling = () => {
           </h1>
           <p className="text-xl text-gray-700 mb-8 text-center max-w-2xl mx-auto">
             {clientName 
-              ? "Agora você pode agendar seu bronzeamento com segurança!"
+              ? "Agora você pode agendar seu bronzeamento!"
               : "Gerencie seus agendamentos de bronzeamento e mantenha-se sempre em dia com seus horários marcados."
             }
           </p>
@@ -115,7 +115,7 @@ const Scheduling = () => {
           {location.state?.anamnesisCompleted && (
             <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg text-center">
               <p className="text-green-800 font-medium">
-                ✅ Anamnese concluída com sucesso! Agora você pode agendar seu bronzeamento.
+                ✅ Anamnese concluída com sucesso!
               </p>
             </div>
           )}
@@ -239,7 +239,7 @@ const Scheduling = () => {
                         >
                           <Link to="/anamnesis">
                             <FileText className="h-4 w-4" />
-                            📋 Preencher Ficha
+                            📋 Preencher Ficha (opcional)
                           </Link>
                         </Button>
 

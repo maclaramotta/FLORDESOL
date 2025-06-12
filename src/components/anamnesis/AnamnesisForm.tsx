@@ -32,13 +32,13 @@ const AnamnesisForm: React.FC<AnamnesisFormProps> = ({ clientId, onComplete }) =
 
   const { markAnamnesisCompleted } = useAnamnesisValidation(clientId);
 
-  // Example predefined questions
+  // Updated questions - all optional now
   const questions: AnamnesisQuestion[] = [
     {
       id: "q1",
       question: "Você tem alguma alergia conhecida?",
       type: "boolean",
-      required: true,
+      required: false, // Changed to optional
       warningTrigger: true,
       warningMessage: "Alergias podem afetar a reação da pele ao bronzeamento."
     },
@@ -52,7 +52,7 @@ const AnamnesisForm: React.FC<AnamnesisFormProps> = ({ clientId, onComplete }) =
       id: "q3",
       question: "Você está tomando algum medicamento?",
       type: "boolean",
-      required: true,
+      required: false, // Changed to optional
       warningTrigger: true,
       warningMessage: "Alguns medicamentos podem causar fotossensibilidade."
     },
@@ -66,7 +66,7 @@ const AnamnesisForm: React.FC<AnamnesisFormProps> = ({ clientId, onComplete }) =
       id: "q5",
       question: "Você já teve alguma queimadura grave devido à exposição solar?",
       type: "boolean",
-      required: true,
+      required: false, // Changed to optional
       warningTrigger: true,
       warningMessage: "Histórico de queimaduras solares aumenta o risco de problemas de pele."
     },
@@ -75,7 +75,7 @@ const AnamnesisForm: React.FC<AnamnesisFormProps> = ({ clientId, onComplete }) =
       question: "Você tem ou teve alguma dessas condições de pele?",
       type: "multiselect",
       options: ["Vitiligo", "Psoríase", "Eczema", "Melanoma", "Herpes", "Nenhuma das anteriores"],
-      required: true,
+      required: false, // Changed to optional
       warningTrigger: ["Vitiligo", "Psoríase", "Eczema", "Melanoma"],
       warningMessage: "Condições dermatológicas podem ter contraindicações para bronzeamento."
     },
@@ -83,7 +83,7 @@ const AnamnesisForm: React.FC<AnamnesisFormProps> = ({ clientId, onComplete }) =
       id: "q7",
       question: "Você está grávida ou amamentando?",
       type: "boolean",
-      required: true,
+      required: false, // Changed to optional
       warningTrigger: true,
       warningMessage: "Gestantes e lactantes devem tomar precauções especiais para bronzeamento."
     },
@@ -91,7 +91,7 @@ const AnamnesisForm: React.FC<AnamnesisFormProps> = ({ clientId, onComplete }) =
       id: "q8",
       question: "Você realizou algum procedimento estético invasivo nos últimos 15 dias?",
       type: "boolean",
-      required: true,
+      required: false, // Changed to optional
       warningTrigger: true,
       warningMessage: "Procedimentos recentes podem interferir com o bronzeamento."
     },
@@ -100,7 +100,7 @@ const AnamnesisForm: React.FC<AnamnesisFormProps> = ({ clientId, onComplete }) =
       question: "Como você avalia a sensibilidade da sua pele?",
       type: "select",
       options: ["Muito sensível", "Moderadamente sensível", "Normal", "Resistente"],
-      required: true,
+      required: false, // Changed to optional
       warningTrigger: ["Muito sensível"],
       warningMessage: "Pele muito sensível requer cuidados especiais durante o bronzeamento."
     },
@@ -141,7 +141,7 @@ const AnamnesisForm: React.FC<AnamnesisFormProps> = ({ clientId, onComplete }) =
   };
 
   const handleNext = () => {
-    // Validate client name first if on step 0
+    // Only validate client name - no other required fields
     if (currentStep === -1) {
       if (!clientName.trim()) {
         toast.error("O nome completo é obrigatório!");
@@ -151,17 +151,7 @@ const AnamnesisForm: React.FC<AnamnesisFormProps> = ({ clientId, onComplete }) =
       return;
     }
     
-    const currentQuestion = questions[currentStep];
-    const currentResponse = getResponseForQuestion(currentQuestion.id);
-    
-    if (currentQuestion.required && 
-        (currentResponse === undefined || 
-         (Array.isArray(currentResponse) && currentResponse.length === 0) ||
-         currentResponse === "")) {
-      toast.error("Esta pergunta é obrigatória!");
-      return;
-    }
-    
+    // Skip validation for all other fields since they're optional
     if (currentStep < questions.length - 1) {
       setCurrentStep(currentStep + 1);
     } else {
@@ -185,28 +175,14 @@ const AnamnesisForm: React.FC<AnamnesisFormProps> = ({ clientId, onComplete }) =
     }
   };
 
+  // Simplified form completion check - only name required
   const isFormComplete = () => {
-    // Check if name is filled
-    if (!clientName.trim()) return false;
-    
-    // Check if all required questions are answered
-    const requiredQuestions = questions.filter(q => q.required);
-    for (const question of requiredQuestions) {
-      const response = getResponseForQuestion(question.id);
-      if (response === undefined || 
-          (Array.isArray(response) && response.length === 0) ||
-          response === "") {
-        return false;
-      }
-    }
-    
-    // Check if signature is provided
-    return !!signature;
+    return clientName.trim() !== "";
   };
 
   const handleSubmit = async () => {
     if (!isFormComplete()) {
-      toast.error("Por favor, preencha todos os campos obrigatórios e forneça sua assinatura");
+      toast.error("Por favor, preencha pelo menos o nome completo");
       return;
     }
     
@@ -219,20 +195,11 @@ const AnamnesisForm: React.FC<AnamnesisFormProps> = ({ clientId, onComplete }) =
       // Mark anamnesis as completed for this client
       markAnamnesisCompleted(clientId);
       
-      toast.success("Anamnese concluída com sucesso!");
+      // Simple success message - no redirects
+      toast.success("Ficha de anamnese salva com sucesso!");
       
       // Store client name for future use
       localStorage.setItem(`client_name_${clientId}`, clientName);
-      
-      // Redirect to appointment scheduling
-      setTimeout(() => {
-        navigate("/appointments", { 
-          state: { 
-            clientName,
-            anamnesisCompleted: true 
-          }
-        });
-      }, 1500);
       
       if (onComplete) {
         onComplete("anamnesis-mock-id");
@@ -337,9 +304,9 @@ const AnamnesisForm: React.FC<AnamnesisFormProps> = ({ clientId, onComplete }) =
       
       <Card className="w-full">
         <CardHeader>
-          <CardTitle>Ficha de Anamnese - Obrigatória</CardTitle>
+          <CardTitle>Ficha de Anamnese - Opcional</CardTitle>
           <CardDescription>
-            Preencha completamente este formulário de saúde para prosseguir com o agendamento
+            Preencha as informações que desejar para um atendimento mais personalizado
           </CardDescription>
           <div className="w-full bg-gray-200 h-2 mt-4 rounded-full overflow-hidden">
             <div 
@@ -375,27 +342,29 @@ const AnamnesisForm: React.FC<AnamnesisFormProps> = ({ clientId, onComplete }) =
                 required
               />
               <p className="text-sm text-gray-500">
-                * Campo obrigatório para prosseguir com a anamnese
+                * Campo obrigatório para identificação
               </p>
             </div>
           ) : currentStep < questions.length ? (
             <div className="space-y-4 animate-fade-in">
               <h3 className="text-lg font-medium">
                 {questions[currentStep].question}
-                {questions[currentStep].required && <span className="text-red-500 ml-1">*</span>}
+                <span className="text-sm text-gray-500 ml-2">(opcional)</span>
               </h3>
               {renderQuestionInput(questions[currentStep])}
             </div>
           ) : (
             <div className="space-y-6 animate-fade-in">
-              <h3 className="text-lg font-medium">Assinatura Digital *</h3>
+              <h3 className="text-lg font-medium">
+                Assinatura Digital <span className="text-sm text-gray-500">(opcional)</span>
+              </h3>
               <p className="text-sm text-gray-500">
-                Ao assinar abaixo, você confirma que todas as informações fornecidas são verdadeiras e que está ciente dos riscos e contraindicações para o procedimento de bronzeamento.
+                Você pode assinar digitalmente para confirmar as informações, mas não é obrigatório.
               </p>
               
               <DigitalSignature 
                 onSignatureChange={handleSignatureChange}
-                required={true}
+                required={false}
               />
               
               <Separator />
@@ -403,7 +372,7 @@ const AnamnesisForm: React.FC<AnamnesisFormProps> = ({ clientId, onComplete }) =
               <div className="text-sm">
                 <p className="font-medium mb-2">Termo de responsabilidade:</p>
                 <p className="text-gray-600">
-                  Declaro estar ciente de que o bronzeamento artificial expõe a pele à radiação ultravioleta, que pode causar envelhecimento precoce da pele, alterações na textura da pele, e, em alguns casos, aumentar o risco de câncer de pele. Certifico que as informações fornecidas neste formulário são verdadeiras e estou ciente das contraindicações apresentadas.
+                  Declaro estar ciente de que o bronzeamento artificial expõe a pele à radiação ultravioleta, que pode causar envelhecimento precoce da pele, alterações na textura da pele, e, em alguns casos, aumentar o risco de câncer de pele.
                 </p>
               </div>
             </div>
@@ -432,7 +401,7 @@ const AnamnesisForm: React.FC<AnamnesisFormProps> = ({ clientId, onComplete }) =
               className="bg-bronze-500 hover:bg-bronze-600"
               disabled={isSubmitting || !isFormComplete()}
             >
-              {isSubmitting ? "Finalizando..." : "Concluir e Ir para Agendamento"}
+              {isSubmitting ? "Salvando..." : "Salvar Ficha"}
             </Button>
           )}
         </CardFooter>

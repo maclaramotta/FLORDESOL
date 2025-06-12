@@ -1,4 +1,3 @@
-
 import React, { useRef, useEffect, useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -143,10 +142,14 @@ const DigitalSignature: React.FC<DigitalSignatureProps> = ({
         <CardTitle className="flex items-center gap-2">
           Assinatura Digital
           {required && <span className="text-red-500">*</span>}
+          {!required && <span className="text-sm text-gray-500 font-normal">(opcional)</span>}
           {isSignatureValid && <CheckCircle className="h-5 w-5 text-green-600" />}
         </CardTitle>
         <CardDescription>
-          Assine com o dedo ou mouse para confirmar as informações
+          {required 
+            ? "Assine com o dedo ou mouse para confirmar as informações"
+            : "Você pode assinar para confirmar as informações, mas não é obrigatório"
+          }
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -166,7 +169,7 @@ const DigitalSignature: React.FC<DigitalSignatureProps> = ({
           {!hasSignature && (
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
               <p className="text-gray-400 text-center">
-                Toque e arraste para assinar
+                {required ? "Toque e arraste para assinar" : "Toque e arraste para assinar (opcional)"}
               </p>
             </div>
           )}
@@ -194,6 +197,12 @@ const DigitalSignature: React.FC<DigitalSignatureProps> = ({
             <p className="text-sm text-green-600 flex items-center gap-1">
               <CheckCircle className="h-4 w-4" />
               Assinatura válida
+            </p>
+          )}
+          
+          {!required && !hasSignature && (
+            <p className="text-sm text-gray-500">
+              Assinatura opcional
             </p>
           )}
         </div>
