@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,11 +26,22 @@ const AnamnesisForm: React.FC<AnamnesisFormProps> = ({ clientId, onComplete }) =
   const [responses, setResponses] = useState<AnamnesisResponse[]>([]);
   const [clientName, setClientName] = useState<string>("");
   const [signature, setSignature] = useState<string>("");
+  const [signatureStatus, setSignatureStatus] = useState<"válida" | "inválida" | "">("");
   const [warnings, setWarnings] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showReport, setShowReport] = useState(false);
+  const [botaoSalvarHabilitado, setBotaoSalvarHabilitado] = useState(false);
 
   const { markAnamnesisCompleted } = useAnamnesisValidation(clientId);
+
+  // Update button enabled state based on your logic
+  useEffect(() => {
+    if (clientName !== "" && signatureStatus === "válida") {
+      setBotaoSalvarHabilitado(true);
+    } else {
+      setBotaoSalvarHabilitado(false);
+    }
+  }, [clientName, signatureStatus]);
 
   // Updated questions - all optional now
   const questions: AnamnesisQuestion[] = [
@@ -170,8 +181,10 @@ const AnamnesisForm: React.FC<AnamnesisFormProps> = ({ clientId, onComplete }) =
   const handleSignatureChange = (hasSignature: boolean, signatureData?: string) => {
     if (hasSignature && signatureData) {
       setSignature(signatureData);
+      setSignatureStatus("válida");
     } else {
       setSignature("");
+      setSignatureStatus("inválida");
     }
   };
 
@@ -180,14 +193,7 @@ const AnamnesisForm: React.FC<AnamnesisFormProps> = ({ clientId, onComplete }) =
     return clientName.trim() !== "";
   };
 
-  const handleSubmit = async () => {
-    if (!isFormComplete()) {
-      toast.error("Por favor, preencha pelo menos o nome completo");
-      return;
-    }
-    
-    setIsSubmitting(true);
-    
+  const salvarFichaAnamnese = async (data: { nome: string; assinatura: string; respostas: AnamnesisResponse[] }) => {
     try {
       // Mock API call - replace with actual API
       await new Promise(resolve => setTimeout(resolve, 1000));
@@ -195,19 +201,45 @@ const AnamnesisForm: React.FC<AnamnesisFormProps> = ({ clientId, onComplete }) =
       // Mark anamnesis as completed for this client
       markAnamnesisCompleted(clientId);
       
-      // Simple success message - no redirects
-      toast.success("Ficha de anamnese salva com sucesso!");
-      
       // Store client name for future use
-      localStorage.setItem(`client_name_${clientId}`, clientName);
+      localStorage.setItem(`client_name_${clientId}`, data.nome);
+      
+      console.log("Ficha salva:", data);
       
       if (onComplete) {
         onComplete("anamnesis-mock-id");
       }
     } catch (error) {
-      toast.error("Erro ao salvar anamnese. Tente novamente.");
-    } finally {
-      setIsSubmitting(false);
+      throw error;
+    }
+  };
+
+  const mostrarAlerta = (mensagem: string, tipo: "sucesso" | "erro") => {
+    if (tipo === "sucesso") {
+      toast.success(mensagem);
+    } else {
+      toast.error(mensagem);
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (botaoSalvarHabilitado) {
+      setIsSubmitting(true);
+      
+      try {
+        await salvarFichaAnamnese({
+          nome: clientName,
+          assinatura: signature,
+          respostas: responses,
+        });
+        mostrarAlerta("Ficha salva com sucesso!", "sucesso");
+      } catch (error) {
+        mostrarAlerta("Erro ao salvar ficha. Tente novamente.", "erro");
+      } finally {
+        setIsSubmitting(false);
+      }
+    } else {
+      mostrarAlerta("Preencha todos os campos obrigatórios antes de salvar.", "erro");
     }
   };
 
@@ -399,7 +431,7 @@ const AnamnesisForm: React.FC<AnamnesisFormProps> = ({ clientId, onComplete }) =
             <Button 
               onClick={handleSubmit}
               className="bg-bronze-500 hover:bg-bronze-600"
-              disabled={isSubmitting || !isFormComplete()}
+              disabled={isSubmitting || !botaoSalvarHabilitado}
             >
               {isSubmitting ? "Salvando..." : "Salvar Ficha"}
             </Button>
