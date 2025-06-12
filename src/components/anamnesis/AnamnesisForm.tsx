@@ -177,8 +177,12 @@ const AnamnesisForm: React.FC<AnamnesisFormProps> = ({ clientId, onComplete }) =
     }
   };
 
-  const handleSignatureChange = (signatureData: string) => {
-    setSignature(signatureData);
+  const handleSignatureChange = (hasSignature: boolean, signatureData?: string) => {
+    if (hasSignature && signatureData) {
+      setSignature(signatureData);
+    } else {
+      setSignature("");
+    }
   };
 
   const isFormComplete = () => {
@@ -389,7 +393,10 @@ const AnamnesisForm: React.FC<AnamnesisFormProps> = ({ clientId, onComplete }) =
                 Ao assinar abaixo, você confirma que todas as informações fornecidas são verdadeiras e que está ciente dos riscos e contraindicações para o procedimento de bronzeamento.
               </p>
               
-              <DigitalSignature onChange={handleSignatureChange} />
+              <DigitalSignature 
+                onSignatureChange={handleSignatureChange}
+                required={true}
+              />
               
               <Separator />
               
