@@ -18,6 +18,7 @@ import BronzeSimulator from "./pages/BronzeSimulator";
 import AnamnesisGuard from "./components/auth/AnamnesisGuard";
 import Dashboard from "./pages/Dashboard";
 import AlertsPage from "./pages/AlertsPage";
+import ProfessionalArea from "./pages/ProfessionalArea";
 
 // Feature pages
 import FeaturesOverview from "./pages/features/FeaturesOverview";
@@ -37,6 +38,27 @@ const SupportPage = () => (
   </div>
 );
 
+// Loading page component
+const LoadingPage = () => (
+  <div className="min-h-screen flex items-center justify-center bg-white">
+    <div className="text-center p-8 rounded-lg bg-white/80 backdrop-blur-sm">
+      <div className="mb-6">
+        <div className="animate-spin text-4xl mb-4">🌀</div>
+        <h2 className="text-2xl font-bold mb-2 text-bronze-800">Carregando</h2>
+        <p className="text-gray-600 mb-6">
+          Estamos preparando sua experiência... aguarde alguns instantes ou clique abaixo para tentar novamente.
+        </p>
+      </div>
+      <button 
+        onClick={() => window.location.href = '/'}
+        className="bg-bronze-500 hover:bg-bronze-600 text-white px-6 py-3 rounded-lg font-medium transition-colors"
+      >
+        Tentar novamente
+      </button>
+    </div>
+  </div>
+);
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -46,6 +68,9 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
+          {/* Loading page route */}
+          <Route path="/loading" element={<LoadingPage />} />
+          
           {/* Public routes - don't require anamnesis */}
           <Route path="/" element={<MainLayout><Index /></MainLayout>} />
           <Route path="/login" element={<MainLayout><div className="container mx-auto px-4 py-12"><LoginForm /></div></MainLayout>} />
@@ -134,8 +159,5 @@ const App = () => (
     </TooltipProvider>
   </QueryClientProvider>
 );
-
-// Add import for ProfessionalArea
-import ProfessionalArea from "./pages/ProfessionalArea";
 
 export default App;
