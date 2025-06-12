@@ -1,96 +1,123 @@
 
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { RefreshCw, CheckCircle } from "lucide-react";
 
 interface DigitalSignatureProps {
-  onChange: (signature: string) => void;
+  onSignatureChange: (hasSignature: boolean, signatureData?: string) => void;
+  required?: boolean;
 }
 
-const DigitalSignature: React.FC<DigitalSignatureProps> = ({ onChange }) => {
+const DigitalSignature: React.FC<DigitalSignatureProps> = ({
+  onSignatureChange,
+  required = false
+}) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [hasSignature, setHasSignature] = useState(false);
+  const [isSignatureValid, setIsSignatureValid] = useState(false);
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const context = canvas.getContext("2d");
-    if (!context) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
 
-    context.lineWidth = 2;
-    context.lineCap = "round";
-    context.strokeStyle = "#000000";
+    // Set canvas size
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width * window.devicePixelRatio;
+    canvas.height = rect.height * window.devicePixelRatio;
+    ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+
+    // Set drawing style
+    ctx.strokeStyle = '#1f2937';
+    ctx.lineWidth = 2;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+
+    // Fill white background
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
   }, []);
 
   const startDrawing = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
     setIsDrawing(true);
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const context = canvas.getContext("2d");
-    if (!context) return;
-
-    let clientX, clientY;
-
-    if ('touches' in e) {
-      // Touch event
-      clientX = e.touches[0].clientX;
-      clientY = e.touches[0].clientY;
-    } else {
-      // Mouse event
-      clientX = e.clientX;
-      clientY = e.clientY;
-    }
-    
-    const rect = canvas.getBoundingClientRect();
-    const x = clientX - rect.left;
-    const y = clientY - rect.top;
-
-    context.beginPath();
-    context.moveTo(x, y);
+    draw(e);
   };
 
   const draw = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
     if (!isDrawing) return;
-    
+
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const context = canvas.getContext("2d");
-    if (!context) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
 
+    const rect = canvas.getBoundingClientRect();
     let clientX, clientY;
 
     if ('touches' in e) {
-      // Touch event
       clientX = e.touches[0].clientX;
       clientY = e.touches[0].clientY;
-      e.preventDefault(); // Prevent scrolling while drawing
     } else {
-      // Mouse event
       clientX = e.clientX;
       clientY = e.clientY;
     }
-    
-    const rect = canvas.getBoundingClientRect();
+
     const x = clientX - rect.left;
     const y = clientY - rect.top;
 
-    context.lineTo(x, y);
-    context.stroke();
+    ctx.lineTo(x, y);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+
     setHasSignature(true);
+    validateSignature();
   };
 
-  const endDrawing = () => {
+  const stopDrawing = () => {
     setIsDrawing(false);
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    ctx.beginPath();
+    validateSignature();
+  };
+
+  const validateSignature = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    // Check if there's actually some drawing on the canvas
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const data = imageData.data;
     
-    if (hasSignature) {
-      const canvas = canvasRef.current;
-      if (!canvas) return;
-      
-      const signatureData = canvas.toDataURL("image/png");
-      onChange(signatureData);
+    let hasContent = false;
+    for (let i = 0; i < data.length; i += 4) {
+      // Check if pixel is not white (255, 255, 255)
+      if (data[i] !== 255 || data[i + 1] !== 255 || data[i + 2] !== 255) {
+        hasContent = true;
+        break;
+      }
+    }
+
+    setIsSignatureValid(hasContent);
+    
+    if (hasContent) {
+      const signatureData = canvas.toDataURL();
+      onSignatureChange(true, signatureData);
+    } else {
+      onSignatureChange(false);
     }
   };
 
@@ -98,45 +125,80 @@ const DigitalSignature: React.FC<DigitalSignatureProps> = ({ onChange }) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const context = canvas.getContext("2d");
-    if (!context) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
 
-    context.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
     setHasSignature(false);
-    onChange('');
+    setIsSignatureValid(false);
+    onSignatureChange(false);
   };
 
   return (
-    <div className="space-y-3">
-      <div 
-        className="border border-gray-300 rounded-md bg-white overflow-hidden"
-        style={{ touchAction: 'none' }}
-      >
-        <canvas
-          ref={canvasRef}
-          width={600}
-          height={200}
-          className="w-full h-auto cursor-crosshair signature-pad"
-          onMouseDown={startDrawing}
-          onMouseMove={draw}
-          onMouseUp={endDrawing}
-          onMouseLeave={endDrawing}
-          onTouchStart={startDrawing}
-          onTouchMove={draw}
-          onTouchEnd={endDrawing}
-        />
-      </div>
-      <div className="flex justify-end">
-        <Button 
-          type="button" 
-          variant="outline" 
-          onClick={clearSignature}
-          disabled={!hasSignature}
-        >
-          Limpar assinatura
-        </Button>
-      </div>
-    </div>
+    <Card className="w-full">
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          Assinatura Digital
+          {required && <span className="text-red-500">*</span>}
+          {isSignatureValid && <CheckCircle className="h-5 w-5 text-green-600" />}
+        </CardTitle>
+        <CardDescription>
+          Assine com o dedo ou mouse para confirmar as informações
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="relative">
+          <canvas
+            ref={canvasRef}
+            className="w-full h-40 border-2 border-dashed border-gray-300 rounded-lg cursor-crosshair touch-none"
+            style={{ touchAction: 'none' }}
+            onMouseDown={startDrawing}
+            onMouseMove={draw}
+            onMouseUp={stopDrawing}
+            onMouseLeave={stopDrawing}
+            onTouchStart={startDrawing}
+            onTouchMove={draw}
+            onTouchEnd={stopDrawing}
+          />
+          {!hasSignature && (
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <p className="text-gray-400 text-center">
+                Toque e arraste para assinar
+              </p>
+            </div>
+          )}
+        </div>
+
+        <div className="flex justify-between items-center">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={clearSignature}
+            className="flex items-center gap-2"
+            disabled={!hasSignature}
+          >
+            <RefreshCw className="h-4 w-4" />
+            Limpar
+          </Button>
+          
+          {required && !isSignatureValid && (
+            <p className="text-sm text-red-600">
+              Assinatura obrigatória
+            </p>
+          )}
+          
+          {isSignatureValid && (
+            <p className="text-sm text-green-600 flex items-center gap-1">
+              <CheckCircle className="h-4 w-4" />
+              Assinatura válida
+            </p>
+          )}
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 

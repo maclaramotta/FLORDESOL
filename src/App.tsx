@@ -52,6 +52,9 @@ const App = () => (
           <Route path="/register" element={<MainLayout><div className="container mx-auto px-4 py-12"><RegisterForm /></div></MainLayout>} />
           <Route path="/bronze-simulator" element={<MainLayout><BronzeSimulator /></MainLayout>} />
           
+          {/* Professional Area - independent login system */}
+          <Route path="/professional-area" element={<MainLayout><ProfessionalArea /></MainLayout>} />
+          
           {/* Feature pages - public */}
           <Route path="/features" element={<MainLayout><FeaturesOverview /></MainLayout>} />
           <Route path="/features/client-profile" element={<MainLayout><ClientProfileFeature /></MainLayout>} />
@@ -131,5 +134,8 @@ const App = () => (
     </TooltipProvider>
   </QueryClientProvider>
 );
+
+// Add import for ProfessionalArea
+import ProfessionalArea from "./pages/ProfessionalArea";
 
 export default App;

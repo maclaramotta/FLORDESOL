@@ -30,10 +30,10 @@ const MainLayout: React.FC<MainLayoutProps> = ({
             
             <div className="flex items-center space-x-4">
               <Button variant="outline" size="sm" asChild className="hidden sm:flex">
-                
+                <Link to="/professional-area">Área do Profissional</Link>
               </Button>
               <Button size="sm" asChild className="hidden sm:flex bg-bronze-500 hover:bg-bronze-600">
-                
+                <Link to="/register">Cadastrar</Link>
               </Button>
               
               <button className="md:hidden p-2 rounded-md" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
@@ -48,7 +48,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({
               
               <div className="flex flex-col space-y-3">
                 <Button variant="outline" size="sm" asChild className="justify-center">
-                  <Link to="/login">Entrar</Link>
+                  <Link to="/professional-area">Área do Profissional</Link>
                 </Button>
                 <Button size="sm" asChild className="justify-center bg-bronze-500 hover:bg-bronze-600">
                   <Link to="/register">Cadastrar</Link>
@@ -84,4 +84,5 @@ const MainLayout: React.FC<MainLayoutProps> = ({
       <Toaster />
     </div>;
 };
+
 export default MainLayout;
